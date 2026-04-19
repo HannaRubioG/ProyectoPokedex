@@ -1,28 +1,42 @@
-//Modales
-// Get the modal
-var modal = document.getElementById("CartaPoke");
+// Info pokemon
+async function OnclickInfoPoke(pokemon) {
+    try {;
+        // Hacer fetch a info del Pokémon seleccionado
+        const url = `https://pokeapi.co/api/v2/pokemon/${pokemon.id}`;
+        const respuesta = await fetch(url);
+        const detalles = await respuesta.json();
 
-// Get the button that opens the modal
-var btnPoke = document.getElementById("btnmodalPoke");
+        // Obtener elementos del modal (ajusta los IDs según tu HTML)
+        const modal = document.getElementById("CartaPoke");
+        const modalContent = modal.querySelector('InfoPoke');
 
-// Get the <span> element that closes the modal
-var span = document.getElementsByClassName("cerrar")[0];
+        // Crear contenido detallado
+        modalContent.innerHTML = `
+            <span class="cerrar">&times;</span>
+            <h2>${detalles.name.toUpperCase()}</h2>
+            <img src="${detalles.sprites.front_default}" alt="${detalles.name}">
+            <p>ID: ${detalles.id}</p>
+            <p>Tipo(s): ${detalles.types.map(t => t.type.name).join(', ')}</p>
+            <p>Altura: ${detalles.height / 10} m</p>
+            <p>Peso: ${detalles.weight / 10} kg</p>
+            <p>Habilidades: </p>
+            <p>Stats:</p>
 
-// When the user clicks on the button, open the modal
-btnPoke.onclick = function() {
-  modal.style.display = "block";
-}
+        `;
 
-// When the user clicks on <span> (x), close the modal
-span.onclick = function() {
-  modal.style.display = "none";
-}
+        // Mostrar el modal
+        modal.style.display = "block";
 
-// When the user clicks anywhere outside of the modal, close it
-window.onclick = function(event) {
-  if (event.target == modal) {
-    modal.style.display = "none";
-  }
+        // cerrar el modal al hacer clic en la "x"
+        const span = modalContent.querySelector(".cerrar");
+        span.onclick = function() {
+            modal.style.display = "none";
+        }
+
+    } catch (error) {
+        console.error("Error al cargar detalles del Pokémon:", error);
+        alert("Error al cargar la información del Pokémon.");
+    }
 }
 
 
@@ -123,6 +137,8 @@ function CardPokemon(pokemon) {
         "<p>Nombre: " + pokemon.name + "</p>" +
         "<p>ID: " + pokemon.id + "</p>" +
         "<p>Tipo: " + tipos + "</p>";
+
+    tarjeta.addEventListener('click', () => OnclickInfoPoke(pokemon.id)); // Pasar el ID del Pokémon a la función
 
     contenedor.appendChild(tarjeta);
 }

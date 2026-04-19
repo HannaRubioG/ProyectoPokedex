@@ -7,21 +7,6 @@
     <script src="Script.js" defer></script>
 </head>
 <body>
-        <!--Modal: Carta Principal-->
-        <button id="btnmodalPoke" > </button>
-        <div id="CartaPoke" class="CardPrincipal" >
-        <!--Contenido-->
-        <div class="InfoPoke">
-            <span class="cerrar">&times;</span>
-            <img id="imgcardP" src="">
-            <p id="altura"></p>
-            <p id="peso"></p>
-            <p id="habilidad"></p>
-            <p id="hp"></p>
-            <p id=""
-        </div>
-
-    </div>
 
     <!--Whos that pokemon?-->
     <button id="guess"></button>
@@ -39,8 +24,8 @@
 
     <h1>Pokedex</h1>
     <input id="buscarPokemon" placeholder="Filtra un Pokémon...">
-    <div id="contenedorPokemones" class="pokemon-grid"></div>
-    <h3 id="loader" style="text-align: center;">Cargando más Pokémones...</h3> 
+    <div id="contenedorPokemones" class="pokemon-grid" onclick="OnclickInfoPoke()"></div>
+    <h3 id="loader" style="text-align: center;">Cargando más Pokémones...</h3>
     <h3 id="aviso" style="text-align: center;">Ya no hay más Pokémones con esas caracteristicas</h3> 
 
 </body>
