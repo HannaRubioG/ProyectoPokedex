@@ -271,11 +271,13 @@ async function mostrarInfoMov(movimiento) {
     let nom = document.getElementById("nomMov");
     let tipo = document.getElementById("tipoMov");
     let listaPokemones = document.getElementById("listaPokemonMov");
+    let img = document.getElementById("imgPokeMov");
 
     nom.innerHTML = "Movimiento: " + movimiento.name;
     tipo.innerHTML = "Tipo: " + movimiento.type.name;
+    img.src = movimiento.sprites.front_default;
 
-    let pokemonSabe = movimiento.learned_by_pokemon.slice(0, 10); 
+    let pokemonSabe = movimiento.learned_by_pokemobn.slice(0, 10); 
 
     let nombresPokemones = pokemonSabe.map(p => p.name);
 
@@ -284,6 +286,48 @@ async function mostrarInfoMov(movimiento) {
 
 document.getElementById("btnBuscarMov").addEventListener("click", () => {
     const busqueda = document.getElementById("inputMovimiento").value.toLowerCase().trim();
+    
+    if (busqueda !== "") {
+        // Reemplaza espacios por guiones 
+        const nombreLimpio = busqueda.replace(/\s+/g, '-');
+        buscarMovimiento(nombreLimpio);
+    }
+});
+
+// BUSCAR ITEMS
+
+async function buscarItem(nombreItem) {
+
+    document.getElementById('contenedorPokemones').style.display = 'none';
+    document.getElementById('loader').style.display = 'none';
+    document.getElementById('aviso').style.display = 'none';
+    
+    fetch("https://pokeapi.co/api/v2/item/" + nombreItem)
+    .then(response => {
+        if(!response.ok) throw new Error('Item no encontrado');
+        return response.json();
+    })
+    .then(data => {
+        mostrarInfoItem(data); 
+    })
+    .catch(error => {
+        console.error('Problema:', error);
+    });
+}
+
+async function mostrarItem(item) {
+    let nom = document.getElementById("nomItem");
+    let img = document.getElementById("imgItem");
+
+    nom.innerHTML = "Item: " + item.name;
+  
+    //img.src = movimiento.sprites.front_default;
+
+    //listaPokemones.innerHTML = "Lo aprenden: <br>" + nombresPokemones.join(", ");
+}
+
+document.getElementById("btnBuscarItem").addEventListener("click", () => {
+    const busqueda = document.getElementById("inputItem").value.toLowerCase().trim();
     
     if (busqueda !== "") {
         // Reemplaza espacios por guiones 

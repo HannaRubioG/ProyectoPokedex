@@ -34,3 +34,250 @@
   text-decoration: none;
   cursor: pointer;
 }
+
+
+
+
+body {
+    margin: 0;
+    min-height: 100vh;
+    font-family: 'Segoe UI', Tahoma, Geneva, Verdana, sans-serif;
+    background: radial-gradient(circle at top left, rgba(255,255,255,.08), transparent 18%),
+                linear-gradient(180deg, #0a253d 0%, #031b2f 100%);
+    color: var(--text);
+}
+
+
+body.light {
+    --bg: #f4f7fb;
+    --surface: rgba(255,255,255,0.9);
+    --surface-strong: rgba(255,255,255,1);
+    --text: #102a43;
+    --muted: #627d98;
+    --border: rgba(16, 42, 67, 0.12);
+    --shadow: 0 20px 40px rgba(16, 42, 67, 0.12);
+    --accent: #ff8c00;
+    --accent2: #de4c4a;
+    background: linear-gradient(180deg, #f8fbff 0%, #e9eff7 100%);
+}
+
+
+body.light .topbar,
+body.light .search-card,
+body.light .cuadro {
+    background: var(--surface-strong);
+}
+
+
+.topbar {
+    display: flex;
+    gap: 1rem;
+    align-items: center;
+    justify-content: space-between;
+    padding: 1.6rem 2rem;
+    max-width: 1200px;
+    margin: 0 auto;
+    background: rgba(255,255,255,.06);
+    border-bottom: 1px solid rgba(255,255,255,.1);
+    backdrop-filter: blur(12px);
+}
+
+
+.topbar h1 {
+    margin: 0;
+    font-size: clamp(2rem, 2.7vw, 3.5rem);
+    letter-spacing: 0.6rem;
+    text-transform: uppercase;
+}
+
+
+.modo-boton,
+.whois {
+    border: none;
+    cursor: pointer;
+    padding: 0.95rem 1.3rem;
+    border-radius: 999px;
+    font-size: 0.95rem;
+    font-weight: 600;
+    display: inline-flex;
+    align-items: center;
+    gap: 0.6rem;
+    background: rgba(255,255,255,.12);
+    color: var(--text);
+    transition: transform 0.2s ease, background 0.2s ease;
+}
+
+
+.modo-boton:hover,
+.whois:hover {
+    transform: translateY(-1px);
+    background: rgba(255,255,255,.18);
+}
+
+
+.search-row {
+    display: grid;
+    grid-template-columns: repeat(3, minmax(0, 1fr));
+    gap: 1rem;
+    max-width: 1200px;
+    margin: 1.5rem auto 0;
+    padding: 0 2rem;
+}
+
+
+.search-card {
+    background: rgba(255,255,255,.06);
+    border: 1px solid var(--border);
+    border-radius: 1.4rem;
+    padding: 1rem 1.2rem;
+    backdrop-filter: blur(10px);
+}
+
+
+.search-card label {
+    display: block;
+    margin-bottom: 0.75rem;
+    color: var(--muted);
+    font-size: 0.95rem;
+}
+
+
+.search-card input {
+    width: 100%;
+    border: 1px solid var(--border);
+    border-radius: 1rem;
+    padding: 0.95rem 1rem;
+    background: rgba(255,255,255,.08);
+    color: var(--text);
+    outline: none;
+    font-size: 1rem;
+}
+
+
+.search-card input::placeholder {
+    color: rgba(255,255,255,0.65);
+}
+
+
+.search-card input:disabled {
+    opacity: 0.6;
+    cursor: not-allowed;
+}
+
+
+main {
+    padding: 1.5rem 2rem 3rem;
+    max-width: 1200px;
+    margin: 0 auto;
+}
+
+
+.pokemon-grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
+    gap: 1.2rem;
+}
+
+
+.cuadro {
+    position: relative;
+    min-height: 260px;
+    border-radius: 2rem;
+    padding: 1.4rem;
+    box-shadow: var(--shadow);
+    overflow: hidden;
+    color: #fff;
+    display: flex;
+    flex-direction: column;
+    justify-content: space-between;
+    background: #ff4f4f;
+}
+
+
+.cuadro:nth-child(3n+1) {
+    background: #ff4f4f !important;
+}
+
+
+.cuadro:nth-child(3n+2) {
+    background: #ff8c00 !important;
+}
+
+
+.cuadro:nth-child(3n) {
+    background: #ffd54f !important;
+    color: #1f1f1f;
+}
+
+
+.cuadro::before {
+    content: '';
+    position: absolute;
+    inset: 0;
+    background: linear-gradient(180deg, rgba(255,255,255,.18) 0%, transparent 45%);
+    pointer-events: none;
+}
+
+
+.pokemon-card-top {
+    z-index: 1;
+    display: flex;
+    justify-content: center;
+    align-items: center;
+    min-height: 160px;
+}
+
+
+.cuadro img {
+    width: 120px;
+    height: auto;
+}
+
+
+.pokemon-card-info {
+    z-index: 1;
+}
+
+
+.cuadro p {
+    margin: 0.45rem 0;
+    font-size: 0.96rem;
+    line-height: 1.4;
+    text-transform: capitalize;
+}
+
+
+.cuadro p:first-of-type {
+    font-size: 1rem;
+    font-weight: 700;
+}
+
+
+#loader {
+    text-align: center;
+    color: var(--muted);
+    margin-top: 2rem;
+}
+
+
+@media (max-width: 860px) {
+    .topbar,
+    .search-row,
+    main {
+        padding-left: 1rem;
+        padding-right: 1rem;
+    }
+
+
+    .topbar {
+        flex-direction: column;
+        align-items: flex-start;
+    }
+
+
+    .search-row {
+        grid-template-columns: 1fr;
+    }
+}
+
+
