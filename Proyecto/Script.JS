@@ -98,12 +98,43 @@ let inicio = 0;
 const limite = 1025;    
 let Cargando = false;
 
+// Cargar pokemones o cargar pokemones filtrados
+let resultadosFiltrados = [];
+let inicioFiltrado = 0;
+
+async function cargarMas(lista, esBusqueda) { //esBusqueda es una variable de verdadero/falso
+    if (Cargando) return;
+    
+    let desde = esBusqueda ? inicioFiltrado : inicio; // empieza a cargar info desde el 0 sin importar si se cargaron más pokemones antes de filtrar (es como un if/else, es un operador ternario)
+    let bloque = lista.slice(desde, desde + limite); //obtiene datos de donde se quedo y carga otro bloque de limite mas
+
+    if (bloque.length === 0) return;
+
+    Cargando = true;
+    try {
+        const detalles = await Promise.all(
+            bloque.map(async (poke) => {
+                const res = await fetch(poke.url);
+                return res.json();
+            })
+        );
+        detalles.forEach(CardPokemon);
+
+        if (esBusqueda) inicioFiltrado += limite;
+        else inicio += limite;
+    } catch (error) {
+        console.error("Error al cargar detalles", error);
+    } finally {
+        Cargando = false;
+    }
+}
+
 async function cargarPokemones() {
     if (Cargando) return; 
     Cargando = true;
     try {
         
-        const url = "https://pokeapi.co/api/v2/pokemon?limit=" + limite + "&offset=" + inicio;
+        const url = "https://pokeapi.co/api/v2/pokemon?limit=" + limite + "&offset=" + inicio; //&offset es para posicionar elementos
         const respuesta = await fetch(url);
         const data = await respuesta.json();
 
@@ -126,6 +157,9 @@ async function cargarPokemones() {
 }
 
 // Algo de clases ahi 
+
+//Tarjeta del pokemon cuando estan todos 
+
 function CardPokemon(pokemon) {
     const tarjeta = document.createElement('div');
     tarjeta.className = 'cuadro'; 
@@ -144,12 +178,20 @@ function CardPokemon(pokemon) {
 }
 
 // "un vigilante" revisa si hay entradas y si si hay hace lo sig
+
 const observer = new IntersectionObserver((entradas) => { 
     // Si vemos el texto "Cargando más Pokémon...", ejecutamos la función
-    const textoBusqueda = document.getElementById('buscarPokemon').value;
-    if (entradas[0].isIntersecting && textoBusqueda === '') { //quitar lo de and
-        cargarPokemones();
-        console.log(aviso);
+    if (entradas[0].isIntersecting) {
+        
+        const textoBusqueda = document.getElementById('buscarPokemon').value.trim();
+        const tipoSeleccionado = document.getElementById('filtroTipo').value; 
+        
+        if (textoBusqueda === '' && tipoSeleccionado === '') {
+            cargarPokemones(); 
+        } else {
+            // Si hay texto o hay un tipo seleccionado, usa la función de cargarMas
+            cargarMas(resultadosFiltrados, true); 
+        }
     }
 }, {
     rootMargin: '200px'  //amplia la "vison" del "vigilante" para que cuando aparezca el mensaje de cargando ya se hayan cargado sin tener que ver ese mensaje en pantalla
@@ -157,3 +199,95 @@ const observer = new IntersectionObserver((entradas) => {
 
 observer.observe(loader);
 
+
+async function filtrarPorTipo(tipoSeleccionado) {
+    document.getElementById('buscarPokemon').value = ''; 
+    
+    resultadosFiltrados = [];
+    contenedor.innerHTML = ''; 
+    inicioFiltrado = 0;
+    loader.style.display = 'none'; //Vigilante desactivado
+    
+    // Si elige "Todos los tipos" solo carga a los Pokemones
+    if (tipoSeleccionado === '') {
+        inicio = 0;
+        cargarPokemones(); 
+        loader.style.display = 'block';
+        aviso.style.display = 'none';
+        return; 
+    }
+
+    // Si elige un tipo específico
+    try {
+        //loader.style.display = 'block'; 
+        aviso.style.display = 'none';
+
+        const respuesta = await fetch("https://pokeapi.co/api/v2/type/" + tipoSeleccionado);
+        const data = await respuesta.json();
+        
+        resultadosFiltrados = data.pokemon.map(p => p.pokemon);
+
+        if (resultadosFiltrados.length > 0) {
+            cargarMas(resultadosFiltrados, true); //cargas mas es true y por lo tanto esBusqueda es true
+            loader.style.display = 'block'; // Vigilante activado
+        } else {
+            aviso.style.display = 'block';
+            //loader.style.display = 'none';
+        }
+
+    } catch (error) {
+        console.error("Hubo un error al buscar por tipo", error);
+    }
+}
+const selectTipo = document.getElementById('filtroTipo');
+
+selectTipo.addEventListener('change', (evento) => { //change ya existe en js
+    // Toma el valor de la lista y se lo manda a la funcion  
+    filtrarPorTipo(evento.target.value); //evento=info, target=select de HTML, value=valor(tipo en este caso)
+});
+
+// BUSCAR MOVIMIENTOS
+
+async function buscarMovimiento(nombreMov) {
+
+    document.getElementById('contenedorPokemones').style.display = 'none';
+    document.getElementById('loader').style.display = 'none';
+    document.getElementById('aviso').style.display = 'none';
+    
+    fetch("https://pokeapi.co/api/v2/move/" + nombreMov)
+    .then(response => {
+        if(!response.ok) throw new Error('Movimiento no encontrado');
+        return response.json();
+    })
+    .then(data => {
+        mostrarInfoMov(data); 
+    })
+    .catch(error => {
+        console.error('Problema:', error);
+    });
+}
+
+async function mostrarInfoMov(movimiento) {
+    let nom = document.getElementById("nomMov");
+    let tipo = document.getElementById("tipoMov");
+    let listaPokemones = document.getElementById("listaPokemonMov");
+
+    nom.innerHTML = "Movimiento: " + movimiento.name;
+    tipo.innerHTML = "Tipo: " + movimiento.type.name;
+
+    let pokemonSabe = movimiento.learned_by_pokemon.slice(0, 10); 
+
+    let nombresPokemones = pokemonSabe.map(p => p.name);
+
+    listaPokemones.innerHTML = "Lo aprenden: <br>" + nombresPokemones.join(", ");
+}
+
+document.getElementById("btnBuscarMov").addEventListener("click", () => {
+    const busqueda = document.getElementById("inputMovimiento").value.toLowerCase().trim();
+    
+    if (busqueda !== "") {
+        // Reemplaza espacios por guiones 
+        const nombreLimpio = busqueda.replace(/\s+/g, '-');
+        buscarMovimiento(nombreLimpio);
+    }
+});
