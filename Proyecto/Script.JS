@@ -1,3 +1,109 @@
+//modal Whos that pokemon
+// Get the modal
+var modal = document.getElementById("modalwtp");
+
+// Get the button that opens the modal
+var btn = document.getElementById("guess");
+
+// Get the <span> element that closes the modal
+var span = document.getElementsByClassName("cerrar")[0];
+
+// When the user clicks on the button, open the modal
+btn.onclick = function() {
+  modal.style.display = "block";
+  randomPokemon();
+}
+
+// When the user clicks on <span> (x), close the modal
+span.onclick = function() {
+  document.getElementById('op1').textContent = " ";
+  document.getElementById('op2').textContent = " ";
+  document.getElementById('op3').textContent = " ";
+  document.getElementById('op4').textContent = " ";
+  modal.style.display = "none";
+}
+
+// When the user clicks anywhere outside of the modal, close it
+window.onclick = function(event) {
+  if (event.target == modal) {
+    modal.style.display = "none";
+    document.getElementById('op1').textContent = " ";
+    document.getElementById('op2').textContent = " ";
+    document.getElementById('op3').textContent = " ";
+    document.getElementById('op4').textContent = " ";
+  }
+}
+
+async function fetchPokemon(id) {
+  try{
+  const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${id}`);
+  
+  if (!res.ok) throw new Error('No encontrado');
+  const data = await res.json();
+
+  displayPokemon(data)
+} catch (error){
+
+}
+}
+
+async function randomPokemon() {
+  const id = Math.floor(Math.random() * 1010) + 1;
+await fetchPokemon(id);
+document.getElementById('check').style.display = "none";
+}
+
+async function displayPokemon(data){
+    img = document.getElementById('imgwtp');
+    img.src = data.sprites.other["official-artwork"].front_default || data.sprites.front_default
+    correctop = Math.floor(Math.random() * 4) + 1;
+
+    for(let i = 1; i <= 4; i++){
+      let randomid = Math.floor(Math.random() * 1010) + 1;
+      const otrasop = await fetch(`https://pokeapi.co/api/v2/pokemon/${randomid}`);
+      const randomData = await otrasop.json();
+      if(i !== correctop){
+        document.getElementById(`op${i}`).textContent = randomData.name;
+      }
+    }
+
+    switch(correctop){
+      case 1:
+        document.getElementById('op1').textContent = data.name;
+        break;
+
+      case 2:
+        document.getElementById('op2').textContent = data.name;
+        break;
+
+      case 3:
+        document.getElementById('op3').textContent = data.name;
+        break;
+      case 4:
+        document.getElementById('op4').textContent = data.name;
+        break;   
+    }
+    obtenercorrect(data);
+   
+  };
+  function obtenercorrect(data){
+    const correcto = data;
+    return correcto;
+  }
+
+  function elegirop(btnid){
+    const pokecorrect = obtenercorrect();
+    if (btnid.textContent==pokecorrect.name){
+        document.getElementById('check').src ='https://tse1.mm.bing.net/th/id/OIP.mkmUCrfrlgzt9oUWeLfWnwHaIe?rs=1&pid=ImgDetMain&o=7&rm=3';  
+    }
+    else {
+        document.getElementById('check').src = 'https://www.pngall.com/wp-content/uploads/8/Red-Mark-Wrong-Transparent.png'
+    }
+    randomPokemon();
+  }
+
+
+
 // Info pokemon
 async function OnclickInfoPoke(pokemon) {
     try {;
@@ -284,8 +390,16 @@ async function mostrarInfoMov(movimiento) {
     let tipo = document.getElementById("tipoMov");
     let listaPokemones = document.getElementById("listaPokemonMov");
 
+    let efecto = document.getElementById("efectoMov"); //Efecto  (si funciona aun)
+
+    let poder = document.getElementById("poderMov"); //POder 
+
     nom.innerHTML = "Movimiento: " + movimiento.name;
     tipo.innerHTML = "Tipo: " + movimiento.type.name;
+
+    efecto.innerHTML = "Efecto: " + movimiento.effect_chance; // 
+    poder.innerHTML = "Poder: " + movimiento.power;
+
     listaPokemones.innerHTML = "Cargando Pokémon...";
 
     let pokemonSabe = movimiento.learned_by_pokemon.slice(0, 15); 
@@ -298,13 +412,17 @@ async function mostrarInfoMov(movimiento) {
             })
         );
 
-        listaPokemones.innerHTML = ""; // Borramos el cargando
+        listaPokemones.innerHTML = ""; // Borrar el aviso de cargando
 
         detalles.forEach(poke => {
-            // USAMOS TU LÓGICA DE TARJETAS AQUÍ
+            
             const tarjeta = document.createElement('div');
             tarjeta.className = 'cuadro'; 
             let tipos = poke.types.map(t => t.type.name).join(', ');
+            //SIn esa linea que agregue si funcionaba, marca error en las imagenes y no la muestra y los objetos se ven raros
+            let efectos = poke.effect_chance.map(e => e.effect_chance.name).join(', '); // AGREGADO
+            let poderes = poke.power.map(p => p.power.name).join(', '); // AGREGADO
+
             let img = (poke.sprites && poke.sprites.front_default) ? poke.sprites.front_default : "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/poke-ball.png";
 
             tarjeta.innerHTML = 
@@ -312,6 +430,8 @@ async function mostrarInfoMov(movimiento) {
                 "<p>Nombre: " + poke.name + "</p>" +
                 "<p>ID: " + poke.id + "</p>" +
                 "<p>Tipo: " + tipos + "</p>";
+                "<p>Efectos: " + effect + "<p>"; //Agregar efectos 
+                "<p>Poder: " + poderes + "<p>";
 
             listaPokemones.appendChild(tarjeta); 
         });
@@ -383,17 +503,17 @@ async function mostrarInfoItem(item) {
 }
 
 function limpiarPantalla() {
-    // Limpiar Pokedex
+    // Limpiar Pokedex sin que desaparezca 
     document.getElementById('contenedorPokemones').style.display = 'none';
     document.getElementById('loader').style.display = 'none';
 
-    // Limpiar Items
+    // Limpiar Items sin que desaparezca
     if (document.getElementById('resultadoItem')) document.getElementById('resultadoItem').style.display = 'none';
     document.getElementById("nomItem").innerHTML = "";
     document.getElementById("descItem").innerHTML = "";
     document.getElementById("imgItem").src = "";
 
-    // Limpiar Movimientos
+    // Limpiar Movimientos sin que desaparezca
     if (document.getElementById('resultadoMovimiento')) document.getElementById('resultadoMovimiento').style.display = 'none';
     document.getElementById("nomMov").innerHTML = "";
     document.getElementById("tipoMov").innerHTML = "";

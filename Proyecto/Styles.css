@@ -35,6 +35,60 @@
   cursor: pointer;
 }
 
+.modal {
+  display: none; /* Hidden by default */
+  position: fixed; /* Stay in place */
+  z-index: 1; /* Sit on top */
+  left: 0;
+  top: 0;
+  width: 100%; /* Full width */
+  height: 100%; /* Full height */
+  overflow: auto; /* Enable scroll if needed */
+  background-color: rgb(0,0,0); /* Fallback color */
+  background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+}
+
+/* Modal Content/Box */
+.whosPoke {
+  background-color: #fefefe;
+  margin: 15% auto; /* 15% from the top and centered */
+  padding: 20px;
+  border: 1px solid #888;
+  width: 80%; /* Could be more or less, depending on screen size */
+}
+
+/* The Close Button */
+.close {
+  color: #aaa;
+  float: right;
+  font-size: 28px;
+  font-weight: bold;
+}
+
+.close:hover,
+.close:focus {
+  color: black;
+  text-decoration: none;
+  cursor: pointer;
+}
+#imgwtp {
+  filter: brightness(0%)
+}
+.opciones {
+  float: right;
+  align-items: flex-end;
+}
+
+.op {
+  width: 50%;
+  height: 50%;
+}
+
+#check{
+    display: none;
+    position: absolute;
+    align-self: center;
+}
 
 
 
@@ -46,7 +100,6 @@ body {
                 linear-gradient(180deg, #0a253d 0%, #031b2f 100%);
     color: var(--text);
 }
-
 
 body.light {
     --bg: #f4f7fb;
@@ -61,13 +114,11 @@ body.light {
     background: linear-gradient(180deg, #f8fbff 0%, #e9eff7 100%);
 }
 
-
 body.light .topbar,
 body.light .search-card,
 body.light .cuadro {
     background: var(--surface-strong);
 }
-
 
 .topbar {
     display: flex;
@@ -82,14 +133,12 @@ body.light .cuadro {
     backdrop-filter: blur(12px);
 }
 
-
 .topbar h1 {
     margin: 0;
     font-size: clamp(2rem, 2.7vw, 3.5rem);
     letter-spacing: 0.6rem;
     text-transform: uppercase;
 }
-
 
 .modo-boton,
 .whois {
@@ -107,13 +156,11 @@ body.light .cuadro {
     transition: transform 0.2s ease, background 0.2s ease;
 }
 
-
 .modo-boton:hover,
 .whois:hover {
     transform: translateY(-1px);
     background: rgba(255,255,255,.18);
 }
-
 
 .search-row {
     display: grid;
@@ -124,7 +171,6 @@ body.light .cuadro {
     padding: 0 2rem;
 }
 
-
 .search-card {
     background: rgba(255,255,255,.06);
     border: 1px solid var(--border);
@@ -133,14 +179,12 @@ body.light .cuadro {
     backdrop-filter: blur(10px);
 }
 
-
 .search-card label {
     display: block;
     margin-bottom: 0.75rem;
     color: var(--muted);
     font-size: 0.95rem;
 }
-
 
 .search-card input {
     width: 100%;
@@ -153,17 +197,14 @@ body.light .cuadro {
     font-size: 1rem;
 }
 
-
 .search-card input::placeholder {
     color: rgba(255,255,255,0.65);
 }
-
 
 .search-card input:disabled {
     opacity: 0.6;
     cursor: not-allowed;
 }
-
 
 main {
     padding: 1.5rem 2rem 3rem;
@@ -171,13 +212,11 @@ main {
     margin: 0 auto;
 }
 
-
 .pokemon-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
     gap: 1.2rem;
 }
-
 
 .cuadro {
     position: relative;
@@ -190,25 +229,45 @@ main {
     display: flex;
     flex-direction: column;
     justify-content: space-between;
-    background: #ff4f4f;
 }
 
+.cuadro.normal { background: #A8A878 !important; color: #1f1f1f; }
+.cuadro.fire { background: #F08030 !important; }
+.cuadro.water { background: #6890F0 !important; }
+.cuadro.electric { background: #F8D030 !important; color: #1f1f1f; }
+.cuadro.grass { background: #78C850 !important; }
+.cuadro.ice { background: #98D8D8 !important; color: #1f1f1f; }
+.cuadro.fighting { background: #C03028 !important; }
+.cuadro.poison { background: #A040A0 !important; }
+.cuadro.ground { background: #E0C068 !important; color: #1f1f1f; }
+.cuadro.flying { background: #A890F0 !important; }
+.cuadro.psychic { background: #F85888 !important; }
+.cuadro.bug { background: #A8B820 !important; }
+.cuadro.rock { background: #B8A038 !important; }
+.cuadro.ghost { background: #705898 !important; }
+.cuadro.dragon { background: #7038F8 !important; }
+.cuadro.dark { background: #705848 !important; }
+.cuadro.steel { background: #B8B8D0 !important; color: #1f1f1f; }
+.cuadro.fairy { background: #EE99AC !important; color: #1f1f1f; }
 
-.cuadro:nth-child(3n+1) {
-    background: #ff4f4f !important;
-}
-
-
-.cuadro:nth-child(3n+2) {
-    background: #ff8c00 !important;
-}
-
-
-.cuadro:nth-child(3n) {
-    background: #ffd54f !important;
-    color: #1f1f1f;
-}
-
+.type-normal { color: #68684c; }
+.type-fire { color: #f0471d; }
+.type-water { color: #6890F0; }
+.type-electric { color: #F8D030; }
+.type-grass { color: #92e07b; }
+.type-ice { color: #7dc6e7; }
+.type-fighting { color: #9b2721; }
+.type-poison { color: #df5cdf; }
+.type-ground { color: #fcda7d; }
+.type-flying { color: #7f5beb; }
+.type-psychic { color: #f12562; }
+.type-bug { color: #cddf2b; }
+.type-rock { color: #d6bd4d; }
+.type-ghost { color: #572e99; }
+.type-dragon { color: #5b18f7; }
+.type-dark { color: #5e351a; }
+.type-steel { color: #8e8ebd; }
+.type-fairy { color: #e2738b; }
 
 .cuadro::before {
     content: '';
@@ -218,7 +277,6 @@ main {
     pointer-events: none;
 }
 
-
 .pokemon-card-top {
     z-index: 1;
     display: flex;
@@ -227,17 +285,14 @@ main {
     min-height: 160px;
 }
 
-
 .cuadro img {
     width: 120px;
     height: auto;
 }
 
-
 .pokemon-card-info {
     z-index: 1;
 }
-
 
 .cuadro p {
     margin: 0.45rem 0;
@@ -246,19 +301,16 @@ main {
     text-transform: capitalize;
 }
 
-
 .cuadro p:first-of-type {
     font-size: 1rem;
     font-weight: 700;
 }
-
 
 #loader {
     text-align: center;
     color: var(--muted);
     margin-top: 2rem;
 }
-
 
 @media (max-width: 860px) {
     .topbar,
@@ -268,16 +320,12 @@ main {
         padding-right: 1rem;
     }
 
-
     .topbar {
         flex-direction: column;
         align-items: flex-start;
     }
 
-
     .search-row {
         grid-template-columns: 1fr;
     }
 }
-
-

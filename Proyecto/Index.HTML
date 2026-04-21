@@ -6,20 +6,30 @@
     <link rel="stylesheet" href="Styles.css">
     <script src="Script.js" defer></script>
 </head>
+
+<header>
+
+</header>
+
 <body>
 
     <!--Whos that pokemon?-->
-    <button id="guess"></button>
-    <div>
+    <button id="guess">Whos that pokemon</button>
+    <!--Modal Whos that pokemon-->
+    <div id="modalwtp" class="modal">
+        <!--contenido-->
         <div class="whosPoke">
             <span class="cerrar">&times;</span>
-            <img id="background" src="">
-            <img id="guesspoke" src="">
-            <button class="Opcion" id="op1"></button>
-            <button class="Opcion" id="op2"></button>
-            <button class="Opcion" id="op3"></button>
-            <button class="Opcion" id="op4"></button>
+            <p>WHOS THAT POKEMON</p>
+            <img id="imgwtp" src="">
+            <img id="check" src="">
+        <div class="opciones">
+            <button id="op1" class="op" onclick="elegirop(this)"></button>
+            <button id="op2" class="op" onclick="elegirop(this)"></button>
+            <button id="op3" class="op" onclick="elegirop(this)"></button>
+            <button id="op4" class="op" onclick="elegirop(this)"></button>
         </div>
+    </div>
     </div>
 
     <h1>Pokedex</h1>
@@ -64,7 +74,10 @@
     <div id="resultadoMovimiento">
         <h3 id="nomMov"></h3>
         <p id="tipoMov"></p>
+        <p id="efectoMov"></p>
+        <p id="poderMov"></p>
         <p id="imgPokeMov"></p>
+        
         <div id="listaPokemonMov"></div>
     </div>
 
