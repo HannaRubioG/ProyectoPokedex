@@ -47,10 +47,20 @@ async function fetchPokemon(id) {
 }
 }
 
+let pokemonCorrect = null;
+let opcorrecta = null;
+
 async function randomPokemon() {
   const id = Math.floor(Math.random() * 1010) + 1;
 await fetchPokemon(id);
 document.getElementById('check').style.display = "none";
+document.getElementById('imgwtp').style.filter = "brightness(0%)"; // Oculta la imagen al cargar un nuevo Pokémon
+document.getElementById('op1').style.backgroundColor = ""; // Resetea el fondo de las opciones
+document.getElementById('op2').style.backgroundColor = "";
+document.getElementById('op3').style.backgroundColor = "";
+document.getElementById('op4').style.backgroundColor = "";
+
+
 }
 
 async function displayPokemon(data){
@@ -79,45 +89,53 @@ async function displayPokemon(data){
       case 3:
         document.getElementById('op3').textContent = data.name;
         break;
+
       case 4:
         document.getElementById('op4').textContent = data.name;
         break;   
     }
-    obtenercorrect(data);
+    pokemonCorrect = data;
+    opcorrecta = correctop;
    
   };
-  function obtenercorrect(data){
-    const correcto = data;
-    return correcto;
-  }
-
-  function elegirop(btnid){
-    const pokecorrect = obtenercorrect();
-    if (btnid.textContent==pokecorrect.name){
+  async function elegirop(btnid){
+    document.getElementById('check').style.display = "block";
+    if (btnid.textContent==pokemonCorrect.name){
+        btnid.style.backgroundColor = "#90EE90"; // Cambia el fondo del botón elegido a verde claro
         document.getElementById('check').src ='https://tse1.mm.bing.net/th/id/OIP.mkmUCrfrlgzt9oUWeLfWnwHaIe?rs=1&pid=ImgDetMain&o=7&rm=3';  
+
     }
     else {
+        document.getElementById(`op${opcorrecta}`).style.backgroundColor = "#90EE90"; // Resalta la opción correcta en verde claro
+        btnid.style.backgroundColor = "#FF7F7F"; // Cambia el fondo del botón elegido a rojo claro
         document.getElementById('check').src = 'https://www.pngall.com/wp-content/uploads/8/Red-Mark-Wrong-Transparent.png'
     }
+
+    document.getElementById('imgwtp').style.filter = "brightness(100%)"; // Revela la imagen al elegir una opción
+    
+
+    
+    setTimeout(function() {
     randomPokemon();
+    }, 3000);
+    
   }
 
 
 
 // Info pokemon
 async function OnclickInfoPoke(pokemon) {
-    try {;
+    try {
         // Hacer fetch a info del Pokémon seleccionado
-        const url = `https://pokeapi.co/api/v2/pokemon/${pokemon.id}`;
-        const respuesta = await fetch(url);
+        const respuesta = await fetch(`https://pokeapi.co/api/v2/pokemon/${pokemon.id}`);
         const detalles = await respuesta.json();
 
         // Obtener elementos del modal (ajusta los IDs según tu HTML)
-        const modal = document.getElementById("CartaPoke");
-        const modalContent = modal.querySelector('InfoPoke');
+        const InfoPokeModal = document.getElementById("CartaPoke");
+        const InfoPokeContent = InfoPokeModal.querySelector('.InfoPoke');
 
         // Crear contenido detallado
-        modalContent.innerHTML = `
+        InfoPokeContent.innerHTML = `
             <span class="cerrar">&times;</span>
             <h2>${detalles.name.toUpperCase()}</h2>
             <img src="${detalles.sprites.front_default}" alt="${detalles.name}">
@@ -125,18 +143,19 @@ async function OnclickInfoPoke(pokemon) {
             <p>Tipo(s): ${detalles.types.map(t => t.type.name).join(', ')}</p>
             <p>Altura: ${detalles.height / 10} m</p>
             <p>Peso: ${detalles.weight / 10} kg</p>
-            <p>Habilidades: </p>
-            <p>Stats:</p>
+            <p>Habilidades: ${detalles.abilities.map(a => a.ability.name).join(', ')}</p>
+            <p>Stats: ${detalles.stats.map(s => `${s.stat.name}: ${s.base_stat}`).join(', ')}</p>
+            
 
         `;
 
         // Mostrar el modal
-        modal.style.display = "block";
+        InfoPokeModal.style.display = "block";
 
         // cerrar el modal al hacer clic en la "x"
-        const span = modalContent.querySelector(".cerrar");
+        const span = InfoPokeContent.querySelector(".cerrar");
         span.onclick = function() {
-            modal.style.display = "none";
+            InfoPokeModal.style.display = "none";
         }
 
     } catch (error) {
@@ -278,7 +297,7 @@ function CardPokemon(pokemon) {
         "<p>ID: " + pokemon.id + "</p>" +
         "<p>Tipo: " + tipos + "</p>";
 
-    tarjeta.addEventListener('click', () => OnclickInfoPoke(pokemon.id)); // Pasar el ID del Pokémon a la función
+    tarjeta.addEventListener('click', () => OnclickInfoPoke(pokemon)); // Pasar el ID del Pokémon a la función
 
     contenedor.appendChild(tarjeta);
 }

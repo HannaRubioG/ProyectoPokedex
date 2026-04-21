@@ -87,7 +87,7 @@
 #check{
     display: none;
     position: absolute;
-    align-self: center;
+    float: right;
 }
 
 
