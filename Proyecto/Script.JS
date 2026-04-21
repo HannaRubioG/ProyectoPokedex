@@ -201,6 +201,14 @@ observer.observe(loader);
 
 
 async function filtrarPorTipo(tipoSeleccionado) {
+    limpiarPantalla(); // Limpiamos rastro de items/movimientos
+
+    //Volvemos a mostrar la Pokedex y ocultamos los movimientos/items
+    document.getElementById('contenedorPokemones').style.display = 'grid';
+   
+    // Carga pokemones
+    document.getElementById('contenedorPokemones').style.display = 'grid';
+
     document.getElementById('buscarPokemon').value = ''; 
     
     resultadosFiltrados = [];
@@ -249,11 +257,14 @@ selectTipo.addEventListener('change', (evento) => { //change ya existe en js
 // BUSCAR MOVIMIENTOS
 
 async function buscarMovimiento(nombreMov) {
+    limpiarPantalla(); // Borramos todos los datos anteriores
 
-    document.getElementById('contenedorPokemones').style.display = 'none';
-    document.getElementById('loader').style.display = 'none';
-    document.getElementById('aviso').style.display = 'none';
+    // Mostramos la caja de movimientos
+    const resMov = document.getElementById('resultadoMovimiento');
+    if (resMov) resMov.style.display = 'block';
     
+    document.getElementById("nomMov").innerHTML = "Buscando movimiento...";
+
     fetch("https://pokeapi.co/api/v2/move/" + nombreMov)
     .then(response => {
         if(!response.ok) throw new Error('Movimiento no encontrado');
@@ -264,6 +275,7 @@ async function buscarMovimiento(nombreMov) {
     })
     .catch(error => {
         console.error('Problema:', error);
+        document.getElementById("nomMov").innerHTML = "Movimiento no encontrado (revisa que esté en inglés)";
     });
 }
 
@@ -271,17 +283,42 @@ async function mostrarInfoMov(movimiento) {
     let nom = document.getElementById("nomMov");
     let tipo = document.getElementById("tipoMov");
     let listaPokemones = document.getElementById("listaPokemonMov");
-    let img = document.getElementById("imgPokeMov");
 
     nom.innerHTML = "Movimiento: " + movimiento.name;
     tipo.innerHTML = "Tipo: " + movimiento.type.name;
-    img.src = movimiento.sprites.front_default;
+    listaPokemones.innerHTML = "Cargando Pokémon...";
 
-    let pokemonSabe = movimiento.learned_by_pokemobn.slice(0, 10); 
+    let pokemonSabe = movimiento.learned_by_pokemon.slice(0, 15); 
 
-    let nombresPokemones = pokemonSabe.map(p => p.name);
+    try {
+        const detalles = await Promise.all(
+            pokemonSabe.map(async p => {
+                const res = await fetch(p.url);
+                return res.json();
+            })
+        );
 
-    listaPokemones.innerHTML = "Lo aprenden: <br>" + nombresPokemones.join(", ");
+        listaPokemones.innerHTML = ""; // Borramos el cargando
+
+        detalles.forEach(poke => {
+            // USAMOS TU LÓGICA DE TARJETAS AQUÍ
+            const tarjeta = document.createElement('div');
+            tarjeta.className = 'cuadro'; 
+            let tipos = poke.types.map(t => t.type.name).join(', ');
+            let img = (poke.sprites && poke.sprites.front_default) ? poke.sprites.front_default : "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/poke-ball.png";
+
+            tarjeta.innerHTML = 
+                "<img src='" + img + "'>" +
+                "<p>Nombre: " + poke.name + "</p>" +
+                "<p>ID: " + poke.id + "</p>" +
+                "<p>Tipo: " + tipos + "</p>";
+
+            listaPokemones.appendChild(tarjeta); 
+        });
+    } catch (error) {
+        console.error(error);
+        listaPokemones.innerHTML = "Error al cargar imágenes.";
+    }
 }
 
 document.getElementById("btnBuscarMov").addEventListener("click", () => {
@@ -296,12 +333,21 @@ document.getElementById("btnBuscarMov").addEventListener("click", () => {
 
 // BUSCAR ITEMS
 
+document.getElementById("btnBuscarItem").addEventListener("click", () => {
+    const valor = document.getElementById("inputItem").value.toLowerCase().trim();
+    if (valor !== "") {
+        const nombreLimpio = valor.replace(/\s+/g, '-');
+        buscarItem(nombreLimpio); 
+    }
+});
+
 async function buscarItem(nombreItem) {
 
-    document.getElementById('contenedorPokemones').style.display = 'none';
-    document.getElementById('loader').style.display = 'none';
-    document.getElementById('aviso').style.display = 'none';
-    
+    limpiarPantalla(); // Borramos todos los datos anteriores
+
+    document.getElementById('resultadoItem').style.display = 'block';
+    document.getElementById("nomItem").innerHTML = "Buscando...";
+
     fetch("https://pokeapi.co/api/v2/item/" + nombreItem)
     .then(response => {
         if(!response.ok) throw new Error('Item no encontrado');
@@ -312,26 +358,44 @@ async function buscarItem(nombreItem) {
     })
     .catch(error => {
         console.error('Problema:', error);
+        document.getElementById("nomItem").innerHTML = "Item no encontrado";
     });
 }
 
-async function mostrarItem(item) {
+async function mostrarInfoItem(item) {
     let nom = document.getElementById("nomItem");
     let img = document.getElementById("imgItem");
+    let desc = document.getElementById("descItem");
 
     nom.innerHTML = "Item: " + item.name;
-  
-    //img.src = movimiento.sprites.front_default;
+    
+    // Imagen
+    if (item.sprites && item.sprites.default) {
+        img.src = item.sprites.default;
+        img.style.display = "block";
+    }
 
-    //listaPokemones.innerHTML = "Lo aprenden: <br>" + nombresPokemones.join(", ");
+    // Efecto del item 
+    const entradaEfecto = item.effect_entries?.find(e => e.language.name === 'en');
+    if (desc && entradaEfecto) {
+        desc.innerHTML = "<strong>Efecto:</strong> " + entradaEfecto.short_effect;
+    }
 }
 
-document.getElementById("btnBuscarItem").addEventListener("click", () => {
-    const busqueda = document.getElementById("inputItem").value.toLowerCase().trim();
-    
-    if (busqueda !== "") {
-        // Reemplaza espacios por guiones 
-        const nombreLimpio = busqueda.replace(/\s+/g, '-');
-        buscarMovimiento(nombreLimpio);
-    }
-});
+function limpiarPantalla() {
+    // Limpiar Pokedex
+    document.getElementById('contenedorPokemones').style.display = 'none';
+    document.getElementById('loader').style.display = 'none';
+
+    // Limpiar Items
+    if (document.getElementById('resultadoItem')) document.getElementById('resultadoItem').style.display = 'none';
+    document.getElementById("nomItem").innerHTML = "";
+    document.getElementById("descItem").innerHTML = "";
+    document.getElementById("imgItem").src = "";
+
+    // Limpiar Movimientos
+    if (document.getElementById('resultadoMovimiento')) document.getElementById('resultadoMovimiento').style.display = 'none';
+    document.getElementById("nomMov").innerHTML = "";
+    document.getElementById("tipoMov").innerHTML = "";
+    document.getElementById("listaPokemonMov").innerHTML = ""; 
+}
