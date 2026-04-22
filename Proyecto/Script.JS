@@ -145,6 +145,7 @@ async function OnclickInfoPoke(pokemon) {
             <p>Peso: ${detalles.weight / 10} kg</p>
             <p>Habilidades: ${detalles.abilities.map(a => a.ability.name).join(', ')}</p>
             <p>Stats: ${detalles.stats.map(s => `${s.stat.name}: ${s.base_stat}`).join(', ')}</p>
+            <button> Evoluciones: ${detalles.evolutionchain.map(e)} 
             
 
         `;
