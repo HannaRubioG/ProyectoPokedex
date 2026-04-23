@@ -398,7 +398,11 @@ async function cargarPokemones() {
 
 function CardPokemon(pokemon) {
     const tarjeta = document.createElement('div');
-    tarjeta.className = 'cuadro'; 
+    tarjeta.className = 'cuadro';
+    
+    // Agregar el atributo data-tipo con el primer tipo del Pokémon
+    const tipoPrimario = pokemon.types[0].type.name;
+    tarjeta.setAttribute('data-tipo', tipoPrimario);
 
     let tipos = pokemon.types.map(t => t.type.name).join(', ');
 
@@ -509,6 +513,10 @@ async function buscarMovimiento(nombreMov) {
     .then(data => {
         mostrarInfoMov(data); 
     })
+    .catch(error => {
+        console.error('Problema:', error);
+        document.getElementById("nomMov").innerHTML = "Movimiento no encontrado (revisa que esté en inglés)";
+    });
 }
 
 async function mostrarInfoMov(movimiento) {

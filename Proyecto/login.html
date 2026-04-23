@@ -1,16 +1,30 @@
 <!DOCTYPE html>
-<html>
+<html >
+    
 <head>
-
-</head> 
-<h2> Bienvenudo a la Pokedex</h2>  
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Pokédex - Login</title>
+  <link rel="stylesheet" href="Styles_log.css">
+</head>
 <body>
+  <div class="login-card">
+    <h2>Bienvenido a la Pokédex</h2>
+    <p class="subtitle">Inicia sesión para continuar</p>
+
     <form action="Index.HTML">
-        <label for="usuario">Usuario:</label><br>
-        <input type="text" id="usu" name="usu" value=""><br>
-        <label for="lname">Contraseña:</label><br>
-        <input type="text" id="cont" name="cont" value=""><br><br>
-        <input type="submit" value="Login">
+      <div class="field">
+        <label for="usu">Usuario</label>
+        <input type="text" id="usu" name="usu" placeholder="Ingresa tu usuario">
+      </div>
+
+      <div class="field">
+        <label for="cont">Contraseña</label>
+        <input type="password" id="cont" name="cont" placeholder="••••••••">
+      </div>
+
+      <input type="submit" value="Login">
     </form>
-</body> 
+  </div>
+</body>
 </html>

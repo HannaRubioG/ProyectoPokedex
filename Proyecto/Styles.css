@@ -89,3 +89,406 @@
     position: absolute;
     align-self: center;
 }
+
+
+@import url('https://fonts.googleapis.com/css2?family=Bangers&family=Nunito:wght@400;700;900&display=swap');
+ 
+/* Variables */
+:root {
+  --bg:       #0f172a;   /* navy profundo */
+  --bg2:      #1e293b;
+  --card:     rgba(180, 204, 243, 0.92);  --border2:rgba (30,41,59,0,92);
+  --border:   rgba(255,255,255,0.07); 
+  --text:     #e2e8f0;
+  --muted:    #64748b;
+  --accent:   #ef4444;
+  --accent2:  #b91c1c;
+  --shadow:   0 4px 20px rgba(0,0,0,0.4);
+  --shadow-h: 0 12px 36px rgba(0,0,0,0.6);
+  --r:        16px;
+  --t:        0.25s ease;
+ 
+  /* Tipos */
+  --normal:#A8A878; --normal2:#6d6d4e;
+  --fire:#F08030;   --fire2:#9C531F;
+  --water:#6890F0;  --water2:#445E9C;
+  --electric:#F8D030; --electric2:#A1871F;
+  --grass:#78C850;  --grass2:#4E8234;
+  --ice:#98D8D8;    --ice2:#638D8D;
+  --fighting:#C03028; --fighting2:#7D1F1A;
+  --poison:#A040A0; --poison2:#682A68;
+  --ground:#E0C068; --ground2:#927D44;
+  --flying:#A890F0; --flying2:#6D5E9C;
+  --psychic:#F85888; --psychic2:#A13959;
+  --bug:#A8B820;    --bug2:#6D7815;
+  --rock:#B8A038;   --rock2:#786824;
+  --ghost:#705898;  --ghost2:#493963;
+  --dragon:#7038F8; --dragon2:#4924A1;
+  --dark:#705848;   --dark2:#49392F;
+  --steel:#B8B8D0;  --steel2:#787887;
+  --fairy:#EE99AC;  --fairy2:#9B6470;
+}
+ 
+[data-theme="light"] {
+  --bg:#f1f5f9; --bg2:#ffffff; --card:rgba(255,255,255,0.88);
+  --border:rgba(0,0,0,0.08); --text:#1e293b; --muted:#94a3b8;
+  --shadow:0 4px 20px rgba(0,0,0,0.09); --shadow-h:0 12px 36px rgba(0,0,0,0.16);
+}
+@media (prefers-color-scheme: light) {
+  :root:not([data-theme="dark"]) {
+    --bg:#f1f5f9; --bg2:#ffffff; --card:rgba(255,255,255,0.88);
+    --border:rgba(0,0,0,0.08); --text:#1e293b; --muted:#94a3b8;
+    --shadow:0 4px 20px rgba(0,0,0,0.09); --shadow-h:0 12px 36px rgba(0,0,0,0.16);
+  }
+}
+ 
+/* Reset & Base */
+*, *::before, *::after { box-sizing: border-box; margin: 0; padding: 0; }
+html { scroll-behavior: smooth; }
+ 
+body {
+  font-family: 'Nunito', sans-serif;
+  background: var(--bg);
+  color: var(--text);
+  min-height: 100vh;
+  transition: background var(--t), color var(--t);
+}
+ 
+/* Encabezado */
+header {
+  position: sticky; top: 0; z-index: 100;
+  background: rgba(5,8,18,0.96);
+  backdrop-filter: blur(14px);
+  border-bottom: 1px solid var(--border);
+  padding: 0 1.5rem;
+}
+.header-inner {
+  max-width: 1400px; margin: 0 auto;
+  display: flex; align-items: center; justify-content: space-between;
+  height: 64px; gap: 1rem;
+}
+h1 {
+  font-family: 'Bangers', cursive;
+  font-size: clamp(1.6rem, 4vw, 2.4rem);
+  letter-spacing: 4px; color: #fff;
+  text-shadow: 2px 2px 0 var(--accent);
+}
+ 
+/* Alternar modo oscuro */
+#darkModeToggle, button#modoOscuroBtn {
+  display: flex; align-items: center; gap: .4rem;
+  padding: .45rem 1rem;
+  background: rgba(255,255,255,0.07);
+  border: 1px solid rgba(255,255,255,0.12);
+  border-radius: 50px; color: #fff;
+  font-family: 'Nunito', sans-serif; font-size: .85rem; font-weight: 700;
+  cursor: pointer; transition: background var(--t);
+}
+#darkModeToggle:hover, button#modoOscuroBtn:hover { background: rgba(255,255,255,0.15); }
+ 
+/* Entradas y Botones */
+input, select {
+  padding: .65rem 1rem;
+  background: var(--bg2); border: 1px solid var(--border);
+  border-radius: 50px; color: var(--text);
+  font-family: 'Nunito', sans-serif; font-size: .9rem;
+  outline: none; appearance: none;
+  transition: border-color var(--t), box-shadow var(--t);
+}
+input:focus, select:focus {
+  border-color: var(--accent);
+  box-shadow: 0 0 0 3px rgba(239,68,68,.2);
+}
+button#btnBuscarItem, button#btnBuscarMov {
+  padding: .6rem 1.2rem;
+  background: var(--accent); color: #fff;
+  border: none; border-radius: 50px;
+  font-family: 'Nunito', sans-serif; font-weight: 700;
+  cursor: pointer; transition: background var(--t), transform var(--t);
+}
+button#btnBuscarItem:hover, button#btnBuscarMov:hover {
+  background: var(--accent2); transform: translateY(-2px);
+}
+ 
+/* Grid de Pokémon */
+#contenedorPokemones, .pokemon-grid {
+  max-width: 1400px; margin: 1.5rem auto;
+  padding: 0 1.5rem;
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(180px, 1fr));
+  gap: 1rem;
+}
+ 
+/* Tarjeta Pokémon */
+.cuadro {
+  --c: var(--accent);
+  --c2: var(--accent2);
+  container-type: inline-size;
+  background: linear-gradient(180deg, rgba(15,23,42,.94) 0%, rgba(15,23,42,.82) 100%);
+  border-radius: var(--r); padding: 1.1rem;
+  display: flex; flex-direction: column; align-items: center; gap: .5rem;
+  cursor: pointer; overflow: hidden;
+
+  border: 1px solid rgba(255,255,255,0.08);
+  border-top: 4px solid var(--c);
+  box-shadow: var(--shadow); backdrop-filter: blur(8px);
+  transition: transform var(--t), box-shadow var(--t), border-color var(--t);
+  animation: pop .35s cubic-bezier(.34,1.56,.64,1) both;
+}
+.cuadro:hover {
+  transform: translateY(-6px) scale(1.02);
+  box-shadow: var(--shadow-h); border-color: var(--c);
+}
+.cuadro img {
+  width: 90px; height: 90px; object-fit: contain;
+  filter: drop-shadow(0 4px 8px rgba(0,0,0,.3));
+  transition: transform var(--t);
+}
+.cuadro:hover img { transform: scale(1.1) translateY(-3px); }
+.cuadro p { font-size: .82rem; color: var(--muted); text-align: center; }
+.cuadro p:first-of-type {
+  font-family: 'Bangers', cursive;
+  font-size: 1rem; letter-spacing: 1.5px;
+  color: var(--text); text-transform: uppercase;
+}
+.cuadro a {
+  font-size: .78rem; font-weight: 700; color: var(--c);
+  text-decoration: none; padding: .25rem .8rem;
+  border: 1.5px solid var(--c); border-radius: 50px; margin-top: auto;
+  transition: background var(--t), color var(--t);
+}
+.cuadro a:hover { background: var(--c); color: #fff; }
+ 
+@container (max-width: 150px) {
+  .cuadro img { width: 64px; height: 64px; }
+  .tipo-badge { font-size: .6rem; padding: .15rem .5rem; }
+}
+ 
+/* Colores por tipo (ignorado para estilo uniforme) */
+/* Todos los cuadros usan el mismo color en .cuadro */
+ 
+/* Insignias de tipo */
+.tipos-container { display: flex; gap: .35rem; flex-wrap: wrap; justify-content: center; }
+ 
+.tipo-badge {
+  padding: .25rem .75rem; border-radius: 999px;
+  font-size: .7rem; font-weight: 900; letter-spacing: .6px;
+  text-transform: uppercase; color: #fff;
+  text-shadow: 0 1px 2px rgba(0,0,0,.4);
+  transition: transform var(--t);
+}
+.tipo-badge:hover { transform: scale(1.08); }
+ 
+.tipo-badge.normal   { background: linear-gradient(135deg, var(--normal),   var(--normal2)); }
+.tipo-badge.fire     { background: linear-gradient(135deg, var(--fire),     var(--fire2)); }
+.tipo-badge.water    { background: linear-gradient(135deg, var(--water),    var(--water2)); }
+.tipo-badge.electric { background: linear-gradient(135deg, var(--electric), var(--electric2)); color:#2a1f00; text-shadow:none; }
+.tipo-badge.grass    { background: linear-gradient(135deg, var(--grass),    var(--grass2)); }
+.tipo-badge.ice      { background: linear-gradient(135deg, var(--ice),      var(--ice2)); color:#1a3232; text-shadow:none; }
+.tipo-badge.fighting { background: linear-gradient(135deg, var(--fighting), var(--fighting2)); }
+.tipo-badge.poison   { background: linear-gradient(135deg, var(--poison),   var(--poison2)); }
+.tipo-badge.ground   { background: linear-gradient(135deg, var(--ground),   var(--ground2)); color:#2a2000; text-shadow:none; }
+.tipo-badge.flying   { background: linear-gradient(135deg, var(--flying),   var(--flying2)); }
+.tipo-badge.psychic  { background: linear-gradient(135deg, var(--psychic),  var(--psychic2)); }
+.tipo-badge.bug      { background: linear-gradient(135deg, var(--bug),      var(--bug2)); }
+.tipo-badge.rock     { background: linear-gradient(135deg, var(--rock),     var(--rock2)); }
+.tipo-badge.ghost    { background: linear-gradient(135deg, var(--ghost),    var(--ghost2)); }
+.tipo-badge.dragon   { background: linear-gradient(135deg, var(--dragon),   var(--dragon2)); }
+.tipo-badge.dark     { background: linear-gradient(135deg, var(--dark),     var(--dark2)); }
+.tipo-badge.steel    { background: linear-gradient(135deg, var(--steel),    var(--steel2)); color:#1a1a2a; text-shadow:none; }
+.tipo-badge.fairy    { background: linear-gradient(135deg, var(--fairy),    var(--fairy2)); }
+ 
+/* Cargador Esqueleto */
+@keyframes shimmer {
+  0%   { background-position: -400px 0; }
+  100% { background-position:  400px 0; }
+}
+.skeleton-card {
+  background: var(--bg2); border-radius: var(--r); padding: 1.1rem;
+  display: flex; flex-direction: column; align-items: center;
+  gap: .65rem; border: 1px solid var(--border);
+}
+.skeleton {
+  background: linear-gradient(90deg,
+    var(--bg2) 25%, color-mix(in srgb, var(--text) 6%, var(--bg2)) 50%, var(--bg2) 75%);
+  background-size: 400px 100%;
+  animation: shimmer 1.3s infinite linear;
+  border-radius: 8px;
+}
+.skeleton-img   { width: 80px; height: 80px; border-radius: 50%; }
+.skeleton-name  { width: 75%; height: 13px; }
+.skeleton-id    { width: 35%; height: 10px; }
+.skeleton-badge { width: 55px; height: 20px; border-radius: 999px; }
+ 
+/* Cargador de desplazamiento infinito */
+#loader {
+  text-align: center; padding: 1.5rem; color: var(--muted); font-weight: 700;
+  display: flex; align-items: center; justify-content: center; gap: .6rem;
+}
+#loader::before {
+  content: ''; width: 20px; height: 20px; flex-shrink: 0;
+  border: 3px solid var(--accent); border-top-color: transparent;
+  border-radius: 50%; animation: spin .7s linear infinite;
+}
+@keyframes spin { to { transform: rotate(360deg); } }
+#aviso { text-align: center; color: var(--muted); padding: 1.5rem; display: none; }
+ 
+/* Modales */
+.CardPrincipal {
+  display: none; position: fixed; z-index: 1;
+  left: 0; top: 0; width: 100%; height: 100%;
+  overflow: auto;
+  background-color: rgba(0,0,0,0.4);
+}
+ 
+.InfoPoke {
+  background-color: var(--bg2);
+  margin: 10% auto; padding: 20px;
+  border: 1px solid var(--border);
+  border-radius: 20px; width: min(500px, 90%);
+  color: var(--text); position: relative;
+  box-shadow: 0 24px 60px rgba(0,0,0,.5);
+  animation: slideUp .28s cubic-bezier(.34,1.56,.64,1);
+}
+ 
+.cerrar {
+  color: var(--muted);
+  float: right; font-size: 28px; font-weight: bold;
+  cursor: pointer; background: none; border: none;
+  transition: color var(--t), transform var(--t);
+}
+.cerrar:hover, .cerrar:focus {
+  color: var(--accent); transform: scale(1.2) rotate(90deg);
+  text-decoration: none;
+}
+ 
+.modal {
+  display: none; position: fixed; z-index: 1;
+  left: 0; top: 0; width: 100%; height: 100%;
+  overflow: auto;
+  background-color: rgba(0,0,0,0.55);
+  backdrop-filter: blur(5px);
+}
+ 
+.whosPoke {
+  background-color: var(--bg2);
+  margin: 10% auto; padding: 20px;
+  border: 1px solid var(--border);
+  border-radius: 20px; width: min(500px, 90%);
+  color: var(--text); position: relative;
+  box-shadow: 0 24px 60px rgba(0,0,0,.5);
+  animation: slideUp .28s cubic-bezier(.34,1.56,.64,1);
+}
+ 
+.close {
+  color: var(--muted);
+  float: right; font-size: 28px; font-weight: bold;
+  cursor: pointer; background: none; border: none;
+  transition: color var(--t), transform var(--t);
+}
+.close:hover, .close:focus {
+  color: var(--accent); transform: scale(1.2) rotate(90deg);
+  text-decoration: none;
+}
+ 
+@keyframes slideUp {
+  from { transform: translateY(30px) scale(.96); opacity: 0; }
+  to   { transform: none; opacity: 1; }
+}
+ 
+.InfoPoke h2 {
+  font-family: 'Bangers', cursive;
+  font-size: 1.8rem; letter-spacing: 3px; margin-bottom: .5rem;
+}
+.InfoPoke img, #imgwtp {
+  display: block; margin: .5rem auto; max-width: 150px;
+  filter: drop-shadow(0 6px 14px rgba(0,0,0,.35));
+}
+.InfoPoke button, .whosPoke button {
+  padding: .5rem 1.1rem; border: none; border-radius: 50px;
+  font-family: 'Nunito', sans-serif; font-weight: 700;
+  cursor: pointer; transition: transform var(--t);
+  background: var(--accent); color: #fff; margin: .3rem .2rem 0;
+}
+.InfoPoke button:hover, .whosPoke button:hover { transform: translateY(-2px); }
+ 
+#imgwtp { filter: brightness(0%); transition: filter .4s ease; }
+ 
+/* ¿Quién es ese Pokémon? */
+#guess {
+  position: fixed; top: 5.5rem; right: 1rem; z-index: 150;
+  display: flex; align-items: center; gap: .4rem;
+  padding: .55rem 1.2rem;
+  background: var(--accent); color: #fff; border: none; border-radius: 50px;
+  font-family: 'Bangers', cursive; font-size: .95rem; letter-spacing: 1.5px;
+  cursor: pointer; box-shadow: 0 4px 16px rgba(239,68,68,.5);
+  transition: transform var(--t), box-shadow var(--t);
+}
+#guess:hover { transform: translateY(-2px); box-shadow: 0 8px 24px rgba(239,68,68,.6); }
+ 
+.opciones {
+  float: right; align-items: flex-end;
+  display: grid; grid-template-columns: 1fr 1fr; gap: .65rem; margin-top: 1rem;
+}
+ 
+.op {
+  width: 50%; height: 50%;
+  padding: .65rem; background: var(--bg);
+  border: 2px solid var(--border); border-radius: 10px;
+  font-family: 'Nunito', sans-serif; font-weight: 700; font-size: .88rem;
+  color: var(--text); cursor: pointer; text-transform: capitalize;
+  transition: border-color var(--t), transform var(--t);
+}
+.op:hover { border-color: var(--accent); transform: scale(1.02); }
+ 
+#check {
+  display: none; position: absolute; align-self: center;
+  width: 50px; margin: .5rem auto 0;
+}
+ 
+/* Resultado de Objeto / Movimiento */
+#resultadoItem, #resultadoMovimiento {
+  max-width: 1400px; margin: 1.5rem auto;
+  padding: 1.25rem 1.75rem;
+  background: var(--card); border-radius: var(--r);
+  border: 1px solid var(--border); backdrop-filter: blur(8px);
+  box-shadow: var(--shadow); display: none; color: var(--text);
+}
+#resultadoItem h3, #resultadoMovimiento h3 {
+  font-family: 'Bangers', cursive; font-size: 1.5rem;
+  letter-spacing: 2px; margin-bottom: .6rem;
+}
+#resultadoItem img { width: 52px; image-rendering: pixelated; margin: .4rem 0; }
+#listaPokemonMov {
+  display: grid; grid-template-columns: repeat(auto-fill, minmax(120px, 1fr));
+  gap: .85rem; margin-top: 1rem;
+}
+ 
+/* Animación de entrada de tarjetas */
+@keyframes pop {
+  from { opacity: 0; transform: translateY(16px) scale(.93); }
+  to   { opacity: 1; transform: none; }
+}
+.cuadro:nth-child(1) { animation-delay: .03s; }
+.cuadro:nth-child(2) { animation-delay: .06s; }
+.cuadro:nth-child(3) { animation-delay: .09s; }
+.cuadro:nth-child(4) { animation-delay: .12s; }
+.cuadro:nth-child(5) { animation-delay: .15s; }
+.cuadro:nth-child(6) { animation-delay: .18s; }
+.cuadro:nth-child(7) { animation-delay: .21s; }
+.cuadro:nth-child(8) { animation-delay: .24s; }
+ 
+/* Barra de desplazamiento */
+::-webkit-scrollbar { width: 7px; }
+::-webkit-scrollbar-track { background: var(--bg); }
+::-webkit-scrollbar-thumb { background: var(--accent); border-radius: 99px; }
+ 
+/* Responsivo */
+@media (max-width: 768px) {
+  #contenedorPokemones, .pokemon-grid { grid-template-columns: repeat(auto-fill, minmax(145px, 1fr)); }
+  .InfoPoke, .whosPoke { padding: 1.25rem; }
+}
+@media (max-width: 480px) {
+  #contenedorPokemones, .pokemon-grid { grid-template-columns: repeat(2, 1fr); padding: 0 .75rem; }
+}
+ 

@@ -1,0 +1,110 @@
+/*es la 1: 40 de la mañana y me quiero dormir pero me falta esto dormir*/
+ /*estilos para el loguin*/
+/* Variables de color*/
+body {
+  --bg:      #0f172a;
+  --bg2:     #1e293b;
+  --card:    rgba(30, 41, 59, 0.95);
+  --border:  rgba(255, 255, 255, 0.08);
+  --text:    #e2e8f0;
+  --muted:   #64748b;
+  --accent:  #ef4444;
+  --accent2: #b91c1c;
+  --r:       16px;
+  --t:       0.2s ease;
+
+  margin: 0;
+  min-height: 100vh;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  background: var(--bg);
+  font-family: 'Nunito', sans-serif;
+  color: var(--text);
+}
+
+/* Tarjeta principal del login  */
+.login-card {
+  background: var(--bg2);
+  border: 1px solid var(--border);
+  border-radius: var(--r);
+  padding: 2.5rem 2rem;
+  width: 100%;
+  max-width: 360px;
+  text-align: center;
+}
+
+/* Título y subtítulo */
+.login-card h2 {
+  font-family: 'Press Start 2P', monospace;
+  font-size: 13px;
+  color: var(--accent);
+  letter-spacing: 1px;
+  margin: 0 0 0.25rem;
+}
+
+.login-card p.subtitle {
+  font-size: 12px;
+  color: var(--muted);
+  margin: 0 0 2rem;
+}
+
+/* Campos del formulario */
+.field {
+  margin-bottom: 1rem;
+  text-align: left;
+}
+
+.field label {
+  display: block;
+  font-size: 11px;
+  color: #94a3b8;
+  text-transform: uppercase;
+  letter-spacing: 0.5px;
+  margin-bottom: 6px;
+}
+
+.field input {
+  width: 100%;
+  box-sizing: border-box;
+  background: var(--bg);
+  border: 1px solid rgba(255, 255, 255, 0.1);
+  border-radius: 8px;
+  padding: 10px 14px;
+  color: var(--text);
+  font-family: 'Nunito', sans-serif;
+  font-size: 14px;
+  outline: none;
+  transition: border-color var(--t);
+}
+
+.field input:focus {
+  border-color: var(--accent);
+}
+
+/* Botón de envío */
+input[type="submit"],
+.btn-login {
+  margin-top: 1.25rem;
+  width: 100%;
+  background: var(--accent);
+  color: #fff;
+  border: none;
+  border-radius: 8px;
+  padding: 11px;
+  font-family: 'Nunito', sans-serif;
+  font-size: 15px;
+  font-weight: 600;
+  cursor: pointer;
+  transition: background var(--t), transform 0.1s;
+}
+
+input[type="submit"]:hover,
+.btn-login:hover {
+  background: var(--accent2);
+}
+
+input[type="submit"]:active,
+.btn-login:active {
+  transform: scale(0.98);
+}

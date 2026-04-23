@@ -1,81 +1,83 @@
 <!DOCTYPE html>
-<html>
+<html lang="es">
 <head>
     <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Pokedex</title>
     <link rel="stylesheet" href="Styles.css">
     <script src="Script.js" defer></script>
 </head>
 
 <header>
+    <div class="header-inner">
+        <h1>Pokedex</h1>
+        <button id="darkModeToggle" class="dark-mode-btn">🌙 Oscuro</button>
+        <button id="guess">Who’s that Pokémon</button>
 
+        <!-- Barra de búsqueda en el header -->
+        <div class="search-bar">
+            <input id="buscarPokemon" placeholder="Filtra un Pokémon..."> 
+
+            <select id="filtroTipo">
+                <option value="">Todos los tipos</option>
+                <option value="fire">Fire</option>
+                <option value="water">Water</option>
+                <option value="grass">Grass</option>
+                <option value="electric">Electric</option>
+                <option value="normal">Normal</option>
+                <option value="fairy">Fairy</option>
+                <option value="poison">Poison</option>
+                <option value="fighting">Fighting</option>
+                <option value="psychic">Psychic</option>
+                <option value="ice">Ice</option>
+                <option value="flying">Flying</option>
+                <option value="ground">Ground</option>
+                <option value="bug">Bug</option>
+                <option value="rock">Rock</option>
+                <option value="ghost">Ghost</option>
+                <option value="dragon">Dragon</option>
+                <option value="dark">Dark</option>
+                <option value="steel">Steel</option>
+            </select>
+
+            <input type="text" id="inputItem" placeholder="Escribe un item...">
+            <button id="btnBuscarItem">Buscar</button>
+
+            <input type="text" id="inputMovimiento" placeholder="Escribe un movimiento...">
+            <button id="btnBuscarMov">Buscar</button>
+        </div>
+    </div>
 </header>
 
 <body>
-
-    <!--Whos that pokemon?-->
-    <button id="guess">Whos that pokemon</button>
     <!--Modal Whos that pokemon-->
     <div id="modalwtp" class="modal">
-        <!--contenido-->
         <div class="whosPoke">
-            <span class="cerrar">&times;</span>
-            <p>WHOS THAT POKEMON</p>
+            <button class="close">&times;</button>
+            <p>WHO’S THAT POKÉMON</p>
             <img id="imgwtp" src="">
             <img id="check" src="">
-        <div class="opciones">
-            <button id="op1" class="op" onclick="elegirop(this)"></button>
-            <button id="op2" class="op" onclick="elegirop(this)"></button>
-            <button id="op3" class="op" onclick="elegirop(this)"></button>
-            <button id="op4" class="op" onclick="elegirop(this)"></button>
+            <div class="opciones">
+                <button id="op1" class="op" onclick="elegirop(this)"></button>
+                <button id="op2" class="op" onclick="elegirop(this)"></button>
+                <button id="op3" class="op" onclick="elegirop(this)"></button>
+                <button id="op4" class="op" onclick="elegirop(this)"></button>
+            </div>
         </div>
     </div>
-    </div>
 
-        <!--Modal info poke-->
-    <div id="CartaPoke" class="modal">
-        <!--contenido-->
+    <!--Modal info poke-->
+    <div id="CartaPoke" class="CardPrincipal">
         <div class="InfoPoke">
+            <button class="cerrar">&times;</button>
+        </div>
     </div>
-    </div>
 
-    <h1>Pokedex</h1>
-    <input id="buscarPokemon" placeholder="Filtra un Pokémon..."> 
-
-    <select id="filtroTipo">
-    
-        <option value="">Todos los tipos</option>
-        <option value="fire">Fire</option>
-        <option value="water">Water</option>
-        <option value="grass">Grass</option>
-        <option value="electric">Electric</option>
-        <option value="normal">Normal</option>
-        <option value="fairy">Fairy</option>
-        <option value="poison">Poison</option>
-        <option value="fighting">Fighting</option>
-        <option value="psychic">Psychic</option>
-        <option value="ice">Ice</option>
-        <option value="flying">Flying</option>
-        <option value="ground">Ground</option>
-        <option value="bug">Bug</option>
-        <option value="rock">Rock</option>
-        <option value="ghost">Ghost</option>
-        <option value="dragon">Dragon</option>
-        <option value="dark">Dark</option>
-        <option value="steel">Steel</option>
-    </select>
-    
-     
-    <input type="text" id="inputItem" placeholder="Escribe un item...">
-    <button id="btnBuscarItem">Buscar</button>
-
-    <input type="text" id="inputMovimiento" placeholder="Escribe un movimiento...">
-    <button id="btnBuscarMov">Buscar</button>
-
+    <!-- Resultados -->
     <div id="resultadoItem">
         <h3 id="nomItem"></h3>
-        <img id="imgItem" src="" alt=""> </div>
-        <p id="descItem" ></p>
+        <img id="imgItem" src="" alt=""> 
+        <p id="descItem"></p>
     </div> 
 
     <div id="resultadoMovimiento">
@@ -84,16 +86,11 @@
         <p id="efectoMov"></p>
         <p id="poderMov"></p>
         <p id="imgPokeMov"></p>
-        
         <div id="listaPokemonMov"></div>
     </div>
 
-
     <div id="contenedorPokemones" class="pokemon-grid"></div>
     
-
     <h3 id="loader" style="text-align: center;">Cargando más Pokémones...</h3>
-    <h3 id="aviso" style="text-align: center;">Ya no hay más Pokémones con esas caracteristicas</h3> 
-
+    <h3 id="aviso" style="text-align: center;">Ya no hay más Pokémones con esas características</h3> 
 </body>
-</html>
