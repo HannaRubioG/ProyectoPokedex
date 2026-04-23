@@ -1,3 +1,20 @@
+//Modo Oscuro
+/*function Darktheme(){
+    const Oscuro = document.getElementById('darkModeToggle');
+    const body = document.body;
+    body.classList.add('light-mode');
+
+    Oscuro.addEventListener('click', () => {
+    if (body.classList.contains('light-mode')) {
+    body.classList.replace('light-mode', 'dark-mode');
+    Oscuro.textContent = '☀️ Claro';
+    } else {
+    body.classList.replace('dark-mode', 'light-mode');
+    Oscuro.textContent = '🌙 Oscuro';
+    }
+});
+}*/
+
 //modal Whos that pokemon
 // Get the modal
 var modal = document.getElementById("modalwtp");
@@ -6,7 +23,8 @@ var modal = document.getElementById("modalwtp");
 var btn = document.getElementById("guess");
 
 // Get the <span> element that closes the modal
-var span = document.getElementsByClassName("cerrar")[0];
+var span = document.getElementsByClassName("close")[0];
+
 
 // When the user clicks on the button, open the modal
 btn.onclick = function() {
@@ -21,8 +39,9 @@ span.onclick = function() {
   document.getElementById('op3').textContent = " ";
   document.getElementById('op4').textContent = " ";
   modal.style.display = "none";
+  document.getElementById('CartaPoke').style.display = "none";
+  document.getElementsByClassName('InfoPoke')[0].innerHTML = " ";
 }
-
 // When the user clicks anywhere outside of the modal, close it
 window.onclick = function(event) {
   if (event.target == modal) {
@@ -134,22 +153,22 @@ async function OnclickInfoPoke(pokemonid) {
         const InfoPokeModal = document.getElementById("CartaPoke");
         const InfoPokeContent = InfoPokeModal.querySelector('.InfoPoke');
 
-        // Crear contenido detallado
-        
+        // Crear contenido detallad
         html = `
             <span class="cerrar">&times;</span>
             <h2>${detalles.name.toUpperCase()}</h2>
             <img id="imgDefault" src="${detalles.sprites.front_default}" alt="${detalles.name}">
-            <p>ID: ${detalles.id}</p>
-            <p>Tipo(s): ${detalles.types.map(t => t.type.name).join(', ')}</p>
-            <p>Altura: ${detalles.height / 10} m</p>
-            <p>Peso: ${detalles.weight / 10} kg</p>
-            <p>Habilidades: ${detalles.abilities.map(a => a.ability.name).join(', ')}</p>
-            <p>Stats: ${detalles.stats.map(s => `${s.stat.name}: ${s.base_stat}`).join(', ')}</p>
-            
+            <p><strong>ID:</strong> ${detalles.id}</p>
+            <p><strong>Tipo(s):</strong> ${detalles.types.map(t => t.type.name).join(', ')}</p>
+            <p><strong>Altura:</strong> ${detalles.height / 10} m</p>
+            <p><strong>Peso:</strong> ${detalles.weight / 10} kg</p>
+            <p><strong>Habilidades:</strong> ${detalles.abilities.map(a => a.ability.name).join(', ')}</p>
+            <img src='https://www.pngall.com/wp-content/uploads/4/Pokeball-PNG-File.png'></img>
         `;
         html += `<button onclick="evolucionesModal(${detalles.id})">Evoluciones</button>`;
         html += `<button id="shinyButton" onclick="shiny(${detalles.id})">Shiny</button>`;
+        html += `<button id="Pokemov" onclick="MovimientosPoke(${detalles.id})">Movimientos</button>`;
+        html += `<button id="statspoke" onclick="StatsPoke(${detalles.id})">Stats</button>`;
 
         InfoPokeContent.innerHTML = html;
 
@@ -161,12 +180,93 @@ async function OnclickInfoPoke(pokemonid) {
         span.onclick = function() {
             InfoPokeModal.style.display = "none";
         }
+        window.onclick = function(event) {
+            if (event.target == InfoPokeModal) {
+                InfoPokeModal.style.display = "none";
+            }
+        }
 
     } catch (error) {
         console.error("Error al cargar detalles del Pokémon:", error);
         alert("Error al cargar la información del Pokémon.");
     }
 }
+async function StatsPoke(pokemonid) {
+    try {
+        const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${pokemonid}`);
+        const detalles = await res.json();
+        const stats = detalles.stats;
+        const InfoPokeModal = document.getElementById("CartaPoke");
+        const InfoPokeContent = InfoPokeModal.querySelector('.InfoPoke');
+
+        let html = `
+            <span class="cerrar">&times;</span>
+            <h2>Stats de ${detalles.name.toUpperCase()}</h2>
+            <div class="stats-container">
+        `;
+        stats.forEach(stat => {
+            html += `
+                <div class="stat-row">
+                    <div class="stat-name">${stat.stat.name.replace('-', ' ')}</div>
+                    <div class="stat-val">${stat.base_stat}</div>
+                    <div class="stat-bar-wrap">
+                        <div class="stat-bar" style="width: ${Math.min(stat.base_stat / 255 * 100, 100)}%"></div>
+                    </div>
+                </div>
+            `;
+        });
+        html += `</div>`;
+        InfoPokeContent.innerHTML = html;
+
+        const span = InfoPokeContent.querySelector(".cerrar");
+        span.onclick = function() {
+            InfoPokeModal.style.display = "none";
+        }
+        window.onclick = function(event) {
+            if (event.target == InfoPokeModal) {
+                InfoPokeModal.style.display = "none";
+            }
+        }
+    } catch (error) {
+        console.error("Error al cargar stats del Pokémon:", error);
+        alert("Error al cargar los stats del Pokémon.");
+    }
+}
+
+async function MovimientosPoke(pokemonid) {
+    try {
+        const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${pokemonid}`);
+        const detalles = await res.json();
+        const movimientos = detalles.moves;
+        const InfoPokeModal = document.getElementById("CartaPoke");
+        const InfoPokeContent = InfoPokeModal.querySelector('.InfoPoke');
+        let html = `
+            <span class="cerrar">&times;</span>
+            <h2>Movimientos de ${detalles.name.toUpperCase()}</h2>
+            <ul style="list-style: none; padding: 0;">
+        `;
+        movimientos.forEach(mov => {
+            html += `<li>${mov.move.name}</li>`;
+        });
+        html += `</ul>`;
+        html += `<button onclick="OnclickInfoPoke(${detalles.id})">Info</button>`;
+        InfoPokeContent.innerHTML = html;
+
+        const span = InfoPokeContent.querySelector(".cerrar");
+        span.onclick = function() {
+            InfoPokeModal.style.display = "none";
+        }
+        window.onclick = function(event) {
+            if (event.target == InfoPokeModal) {
+                InfoPokeModal.style.display = "none";
+            }
+        }
+    } catch (error) {
+        console.error("Error al cargar movimientos del Pokémon:", error);
+        alert("Error al cargar los movimientos del Pokémon.");
+    }
+}
+
 
 async function shiny(pokemonid) {
     try {
@@ -411,6 +511,7 @@ function CardPokemon(pokemon) {
         "<p>Nombre: " + pokemon.name + "</p>" +
         "<p>ID: " + pokemon.id + "</p>" +
         "<p>Tipo: " + tipos + "</p>";
+        
 
     tarjeta.addEventListener('click', () => OnclickInfoPoke(pokemon.id)); // Pasar el ID del Pokémon a la función
 
@@ -499,7 +600,7 @@ selectTipo.addEventListener('change', (evento) => { //change ya existe en js
 async function buscarMovimiento(nombreMov) {
     limpiarPantalla(); // Borramos todos los datos anteriores
 
-    // Mostramos la caja de movimientos
+    // Mostramos la tarjeta de movimientos
     const resMov = document.getElementById('resultadoMovimiento');
     if (resMov) resMov.style.display = 'block';
     
@@ -515,7 +616,7 @@ async function buscarMovimiento(nombreMov) {
     })
     .catch(error => {
         console.error('Problema:', error);
-        document.getElementById("nomMov").innerHTML = "Movimiento no encontrado (revisa que esté en inglés)";
+        document.getElementById("nomMov").innerHTML = "Movimiento no encontrado o no tiene Pokémon que lo aprendan";
     });
 }
 
@@ -553,9 +654,6 @@ async function mostrarInfoMov(movimiento) {
             const tarjeta = document.createElement('div');
             tarjeta.className = 'cuadro'; 
             let tipos = poke.types.map(t => t.type.name).join(', ');
-            //SIn esa linea que agregue si funcionaba, marca error en las imagenes y no la muestra y los objetos se ven raros
-            let efectos = poke.effect_chance.map(e => e.effect_chance.name).join(', '); // AGREGADO
-            let poderes = poke.power.map(p => p.power.name).join(', '); // AGREGADO
 
             let img = (poke.sprites && poke.sprites.front_default) ? poke.sprites.front_default : "https://raw.githubusercontent.com/PokeAPI/sprites/master/sprites/items/poke-ball.png";
 
@@ -564,11 +662,11 @@ async function mostrarInfoMov(movimiento) {
                 "<p>Nombre: " + poke.name + "</p>" +
                 "<p>ID: " + poke.id + "</p>" +
                 "<p>Tipo: " + tipos + "</p>";
-                "<p>Efectos: " + effect + "<p>"; //Agregar efectos 
-                "<p>Poder: " + poderes + "<p>";
 
             listaPokemones.appendChild(tarjeta); 
+            tarjeta.addEventListener('click', () => OnclickInfoPoke(poke.id));
         });
+        
     } catch (error) {
         console.error(error);
         listaPokemones.innerHTML = "Error al cargar imágenes.";
