@@ -509,10 +509,6 @@ async function buscarMovimiento(nombreMov) {
     .then(data => {
         mostrarInfoMov(data); 
     })
-    .catch(error => {
-        console.error('Problema:', error);
-        document.getElementById("nomMov").innerHTML = "Movimiento no encontrado (revisa que esté en inglés)";
-    });
 }
 
 async function mostrarInfoMov(movimiento) {
