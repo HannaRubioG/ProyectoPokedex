@@ -124,10 +124,10 @@ async function displayPokemon(data){
 
 
 // Info pokemon
-async function OnclickInfoPoke(pokemon) {
+async function OnclickInfoPoke(pokemonid) {
     try {
         // Hacer fetch a info del Pokémon seleccionado
-        const respuesta = await fetch(`https://pokeapi.co/api/v2/pokemon/${pokemon.id}`);
+        const respuesta = await fetch(`https://pokeapi.co/api/v2/pokemon/${pokemonid}`);
         const detalles = await respuesta.json();
 
         // Obtener elementos del modal (ajusta los IDs según tu HTML)
@@ -135,20 +135,23 @@ async function OnclickInfoPoke(pokemon) {
         const InfoPokeContent = InfoPokeModal.querySelector('.InfoPoke');
 
         // Crear contenido detallado
-        InfoPokeContent.innerHTML = `
+        
+        html = `
             <span class="cerrar">&times;</span>
             <h2>${detalles.name.toUpperCase()}</h2>
-            <img src="${detalles.sprites.front_default}" alt="${detalles.name}">
+            <img id="imgDefault" src="${detalles.sprites.front_default}" alt="${detalles.name}">
             <p>ID: ${detalles.id}</p>
             <p>Tipo(s): ${detalles.types.map(t => t.type.name).join(', ')}</p>
             <p>Altura: ${detalles.height / 10} m</p>
             <p>Peso: ${detalles.weight / 10} kg</p>
             <p>Habilidades: ${detalles.abilities.map(a => a.ability.name).join(', ')}</p>
             <p>Stats: ${detalles.stats.map(s => `${s.stat.name}: ${s.base_stat}`).join(', ')}</p>
-            <button> Evoluciones: ${detalles.evolutionchain.map(e)} 
             
-
         `;
+        html += `<button onclick="evolucionesModal(${detalles.id})">Evoluciones</button>`;
+        html += `<button id="shinyButton" onclick="shiny(${detalles.id})">Shiny</button>`;
+
+        InfoPokeContent.innerHTML = html;
 
         // Mostrar el modal
         InfoPokeModal.style.display = "block";
@@ -162,6 +165,113 @@ async function OnclickInfoPoke(pokemon) {
     } catch (error) {
         console.error("Error al cargar detalles del Pokémon:", error);
         alert("Error al cargar la información del Pokémon.");
+    }
+}
+
+async function shiny(pokemonid) {
+    try {
+        const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${pokemonid}`);
+        const detalles = await res.json();
+        const imgShiny = detalles.sprites.front_shiny;
+
+        const InfoPokeModal = document.getElementById("CartaPoke");
+        const InfoPokeContent = InfoPokeModal.querySelector('.InfoPoke');
+
+        document.getElementById("imgDefault").src = imgShiny;
+        document.getElementById("shinyButton").textContent = "Normal";
+        document.getElementById("shinyButton").onclick = function() {
+            normal(pokemonid);
+        }
+    } catch (error) {
+        console.error("Error al cargar la imagen shiny:", error);
+        alert("Error al cargar la imagen shiny del Pokémon.");
+    }
+}
+
+async function normal (pokemonid) {
+    try {
+        const res = await fetch(`https://pokeapi.co/api/v2/pokemon/${pokemonid}`);
+        const detalles = await res.json();
+        const imgnr = detalles.sprites.front_default;
+
+        const InfoPokeModal = document.getElementById("CartaPoke");
+        const InfoPokeContent = InfoPokeModal.querySelector('.InfoPoke');
+
+        document.getElementById("imgDefault").src = imgnr;
+        document.getElementById("shinyButton").textContent = "Shiny";
+        document.getElementById("shinyButton").onclick = function() {
+            shiny(pokemonid);
+        }
+
+    } catch (error) {
+        console.error("Error al cargar la imagen shiny:", error);
+        alert("Error al cargar la imagen shiny del Pokémon.");
+    }
+}
+
+async function evolucionesModal(pokemon) {
+    try {
+        // Obtener la especie del Pokémon
+        const respuesta = await fetch(`https://pokeapi.co/api/v2/pokemon-species/${pokemon}`);
+        const data = await respuesta.json();
+        
+        // Obtener la cadena de evolución
+        const resEvol = await fetch(data.evolution_chain.url);
+        const evolData = await resEvol.json();
+
+        // Recorrer la cadena y obtener datos de cada evolución
+        let evoluciones = [];
+        let cadena = evolData.chain;
+        
+        while (cadena) {
+            const nombreEspecies = cadena.species.name;
+            
+            // Obtener datos del Pokémon para la imagen
+            const resPoke = await fetch(`https://pokeapi.co/api/v2/pokemon/${nombreEspecies}`);
+            const pokemonData = await resPoke.json();
+            
+            evoluciones.push({
+                nombre: nombreEspecies,
+                imagen: pokemonData.sprites.front_default
+            });
+            
+            cadena = cadena.evolves_to[0] || null;
+        }
+
+        // Mostrar en el modal
+        const InfoPokeModal = document.getElementById("CartaPoke");
+        const InfoPokeContent = InfoPokeModal.querySelector('.InfoPoke');
+
+        let html = `
+            <span class="cerrar">&times;</span>
+            <h2>Evoluciones de ${data.name.toUpperCase()}</h2>
+            <div style="display: flex; gap: 20px; justify-content: center;">
+        `;
+        
+        evoluciones.forEach(evo => {
+            html += `
+                <div style="text-align: center;">
+                    <img src="${evo.imagen}" alt="${evo.nombre}" style="width: 100px; height: 100px;">
+                    <p>${evo.nombre}</p>
+                </div>
+            `;
+        });
+        
+        html += `</div>`;
+
+        html += `<button onclick="OnclickInfoPoke(${pokemon})">Info</button>`;
+
+        InfoPokeContent.innerHTML = html
+        ;
+
+        const span = InfoPokeContent.querySelector(".cerrar");
+        span.onclick = function() {
+            InfoPokeModal.style.display = "none";
+        }
+
+    } catch (error) {
+        console.error("Error al cargar evoluciones:", error);
+        alert("Error al cargar las evoluciones del Pokémon.");
     }
 }
 
@@ -298,7 +408,7 @@ function CardPokemon(pokemon) {
         "<p>ID: " + pokemon.id + "</p>" +
         "<p>Tipo: " + tipos + "</p>";
 
-    tarjeta.addEventListener('click', () => OnclickInfoPoke(pokemon)); // Pasar el ID del Pokémon a la función
+    tarjeta.addEventListener('click', () => OnclickInfoPoke(pokemon.id)); // Pasar el ID del Pokémon a la función
 
     contenedor.appendChild(tarjeta);
 }
