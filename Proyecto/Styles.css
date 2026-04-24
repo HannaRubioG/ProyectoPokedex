@@ -447,6 +447,43 @@ button#btnBuscarItem:hover, button#btnBuscarMov:hover {
   background: var(--accent); color: #fff; margin: .3rem .2rem 0;
 }
 .InfoPoke button:hover, .whosPoke button:hover { transform: translateY(-2px); }
+
+/* Modal Equipo Pokémon */
+#contenedorEquipo {
+  display: none; position: fixed; z-index: 1;
+  left: 0; top: 0; width: 100%; height: 100%;
+  overflow: auto;
+  background-color: rgba(0,0,0,0.55);
+  backdrop-filter: blur(5px);
+}
+
+.InfoEquipo {
+  background-color: var(--bg2);
+  margin: 10% auto; padding: 20px;
+  border: 1px solid var(--border);
+  border-radius: 20px; width: min(500px, 90%);
+  color: var(--text); position: relative;
+  box-shadow: 0 24px 60px rgba(0,0,0,.5);
+  animation: slideUp .28s cubic-bezier(.34,1.56,.64,1);
+}
+
+.InfoEquipo h3 {
+  font-family: 'Bangers', cursive;
+  font-size: 1.8rem; letter-spacing: 3px; margin-bottom: .5rem;
+  text-align: center;
+}
+
+.InfoEquipo .cerrar {
+  color: var(--muted);
+  float: right; font-size: 28px; font-weight: bold;
+  cursor: pointer; background: none; border: none;
+  transition: color var(--t), transform var(--t);
+}
+
+.InfoEquipo .cerrar:hover, .cerrar:focus {
+  color: var(--accent); transform: scale(1.2) rotate(90deg);
+  text-decoration: none;
+}
  
 #imgwtp { filter: brightness(0%); transition: filter .4s ease; }
  

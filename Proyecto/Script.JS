@@ -1,19 +1,141 @@
-//Modo Oscuro
-/*function Darktheme(){
-    const Oscuro = document.getElementById('darkModeToggle');
-    const body = document.body;
-    body.classList.add('light-mode');
+async function agregaralEquipo(pokemonid) {
+    try {
+        const respuesta = await fetch(`https://pokeapi.co/api/v2/pokemon/${pokemonid}`);
+        const detalles = await respuesta.json();
 
-    Oscuro.addEventListener('click', () => {
-    if (body.classList.contains('light-mode')) {
-    body.classList.replace('light-mode', 'dark-mode');
-    Oscuro.textContent = '☀️ Claro';
-    } else {
-    body.classList.replace('dark-mode', 'light-mode');
-    Oscuro.textContent = '🌙 Oscuro';
+        // Verificar límite del equipo
+        let equipo = JSON.parse(localStorage.getItem('equipoPokemon')) || [];
+        if (equipo.length >= 6) {
+            alert("Tu equipo está lleno (máximo 6 Pokémon)");
+            return;
+        }
+
+        // Mostrar modal para ingresar nombre
+        const InfoPokeModal = document.getElementById("CartaPoke");
+        const InfoPokeContent = InfoPokeModal.querySelector('.InfoPoke');
+        InfoPokeContent.innerHTML = `
+            <span class="cerrar">&times;</span>
+            <h2>Dale un nombre a ${detalles.name}</h2>
+            <input type="text" id="nombreEquipo" placeholder="Nombre del Pokémon en tu equipo">
+            <button id="guardarNombre">Guardar</button>
+        `;
+        
+        InfoPokeModal.style.display = "block";
+
+        // Configurar botón guardar
+        document.getElementById('guardarNombre').onclick = function() {
+            guardarNombre(detalles);
+        };
+
+        // Configurar cierre del modal
+        const span = InfoPokeContent.querySelector(".cerrar");
+        span.onclick = function() {
+            InfoPokeModal.style.display = "none";
+        };
+        window.onclick = function(event) {
+            if (event.target == InfoPokeModal) {
+                InfoPokeModal.style.display = "none";
+            }
+        };
+    } catch (error) {
+        console.error("Error al agregar al equipo", error);
+        alert("Error al agregar al equipo");
     }
-});
-}*/
+}
+
+function guardarNombre(detalles) {
+    const nombre = document.getElementById('nombreEquipo').value;
+    const InfoPokeModal = document.getElementById("CartaPoke");
+    
+    if (nombre) {
+        // Agregar Pokémon al equipo con el nombre personalizado
+        let equipo = JSON.parse(localStorage.getItem('equipoPokemon')) || [];
+        
+        // Guardar también el nombre personalizado
+        detalles.nombrePersonalizado = nombre;
+        equipo.push(detalles);
+        localStorage.setItem('equipoPokemon', JSON.stringify(equipo));
+        
+        InfoPokeModal.style.display = "none";
+        alert(`${nombre.toUpperCase()} ha sido agregado a tu equipo!`);
+        
+        // Actualizar la vista del equipo si existe la función
+        if (typeof mostarEquipos === 'function') {
+            mostarEquipos();
+        }
+    } else {
+        alert('Por favor, ingresa un nombre para el Pokémon.');
+    }
+}
+function mostarEquipos() {
+    try {
+        const equipo = JSON.parse(localStorage.getItem('equipoPokemon')) || [];
+        const contenedorEquipoP = document.getElementById("contenedorEquipo");
+        const InfoEquipoContent = contenedorEquipoP.querySelector('.InfoEquipo');
+        
+        // Limpiar contenido anterior (mantener el botón cerrar)
+        const btnCerrar = InfoEquipoContent.querySelector('.cerrar');
+        InfoEquipoContent.innerHTML = '';
+        if (btnCerrar) InfoEquipoContent.appendChild(btnCerrar);
+        
+        // Agregar título
+        const titulo = document.createElement('h3');
+        titulo.textContent = 'Equipo Pokémon';
+        InfoEquipoContent.appendChild(titulo);
+
+        // Mostrar modal
+        contenedorEquipoP.style.display = "block";
+
+        // Configurar cierre del modal
+        const span = InfoEquipoContent.querySelector(".cerrar");
+        if (span) {
+            span.onclick = function() {
+                contenedorEquipoP.style.display = "none";
+            };
+        }
+        window.onclick = function(event) {
+            if (event.target == contenedorEquipoP) {
+                contenedorEquipoP.style.display = "none";
+            }
+        };
+
+        if (equipo.length === 0) {
+            const mensaje = document.createElement('p');
+            mensaje.textContent = 'Tu equipo está vacío';
+            InfoEquipoContent.appendChild(mensaje);
+            return;
+        }
+
+        equipo.forEach(pokemon => {
+            const carta = document.createElement('div');
+            const nombreMostrar = pokemon.nombrePersonalizado || pokemon.name;
+            carta.innerHTML = `
+                <h3>${nombreMostrar.toUpperCase()}</h3>
+                <span id="eliminar" onclick="eliminarPokemon(this)"> &times; </span>
+                <img src="${pokemon.sprites.front_default}" alt="${pokemon.name}">
+                <p>Altura: ${pokemon.height}</p>
+                <p>Peso: ${pokemon.weight}</p>
+            `;
+            InfoEquipoContent.appendChild(carta);
+            carta.addEventListener('click', () => OnclickInfoPoke(pokemon.id));
+        });
+    } catch (error) {
+        console.error("Error al cargar los equipos", error);
+        alert("Error al cargar los equipos");
+    }
+}
+function eliminarPokemon(elemento) {
+    const equipo = JSON.parse(localStorage.getItem('equipoPokemon')) || [];
+    const carta = elemento.parentElement;
+    const nombrePokemon = carta.querySelector('h3').textContent.toLowerCase();
+    const index = equipo.findIndex(p => (p.nombrePersonalizado || p.name).toLowerCase() === nombrePokemon);
+    if (index !== -1) {
+        equipo.splice(index, 1);
+        localStorage.setItem('equipoPokemon', JSON.stringify(equipo));
+        carta.remove();
+    }
+}
+
 
 //modal Whos that pokemon
 // Get the modal
@@ -157,13 +279,13 @@ async function OnclickInfoPoke(pokemonid) {
         html = `
             <span class="cerrar">&times;</span>
             <h2>${detalles.name.toUpperCase()}</h2>
+            <button onclick="agregaralEquipo(${detalles.id})"><img style="width: 20px; height: auto;" src='https://www.pngall.com/wp-content/uploads/4/Pokeball-PNG-File.png'></img></button>
             <img id="imgDefault" src="${detalles.sprites.front_default}" alt="${detalles.name}">
             <p><strong>ID:</strong> ${detalles.id}</p>
             <p><strong>Tipo(s):</strong> ${detalles.types.map(t => t.type.name).join(', ')}</p>
             <p><strong>Altura:</strong> ${detalles.height / 10} m</p>
             <p><strong>Peso:</strong> ${detalles.weight / 10} kg</p>
             <p><strong>Habilidades:</strong> ${detalles.abilities.map(a => a.ability.name).join(', ')}</p>
-            <img src='https://www.pngall.com/wp-content/uploads/4/Pokeball-PNG-File.png'></img>
         `;
         html += `<button onclick="evolucionesModal(${detalles.id})">Evoluciones</button>`;
         html += `<button id="shinyButton" onclick="shiny(${detalles.id})">Shiny</button>`;

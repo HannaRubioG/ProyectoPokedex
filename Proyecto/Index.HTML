@@ -13,8 +13,8 @@
         <h1>Pokedex</h1>
         <button id="darkModeToggle" class="dark-mode-btn">🌙 Oscuro</button>
         <button id="guess">Who’s that Pokémon</button>
-        <button id="equipo" style="background: none;">
-            <img src='https://www.pngall.com/wp-content/uploads/4/Pokeball-PNG-File.png' style="width: 50px; height: auto;"></img>
+        <button id="equipo" onclick="mostarEquipos()" style="background: none;">
+        <img src='https://www.pngall.com/wp-content/uploads/4/Pokeball-PNG-File.png' style="width: 50px; height: auto;"></img>
         </button>
         <!-- Barra de búsqueda en el header -->
         <div class="search-bar">
@@ -72,6 +72,14 @@
     <div id="CartaPoke" class="CardPrincipal">
         <div class="InfoPoke">
             <button class="cerrar">&times;</button>
+        </div>
+    </div>
+
+    <!--Modal equipo-->
+    <div id="contenedorEquipo" class="modal">
+        <div class="InfoEquipo">
+            <button class="cerrar">&times;</button>
+            <h3>Equipo Pokémon</h3>
         </div>
     </div>
 
